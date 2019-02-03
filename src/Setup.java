@@ -100,7 +100,7 @@ public class Setup {
             }
         }catch(ClassNotFoundException e)
         {
-            e.printStackTrace();
+            //e.printStackTrace();
             System.out.println(className + " is not a valid class name");
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
