@@ -5,7 +5,7 @@ public class Main {
 
     public static void main(String[] args)
     {
-        Setup test = new Setup("D:\\University\\Stage 3\\Semester 2\\Software Engineering\\Assignment1\\src");
+        Setup test = new Setup("./src");
         ArrayList<String> classNames = test.getClassNames();
         Class[] instances = new Class[classNames.size()];
 
