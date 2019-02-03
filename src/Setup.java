@@ -95,6 +95,11 @@ public class Setup {
 
                 return cls;
             }
+            else if(Class.forName(className).isInterface())
+            {
+                System.out.println(className + " is an interface, cannot be instantiated.");
+                return Class.forName(className);
+            }
             else{
                 System.out.println(className + " is not a class, skipping instantiation..");
             }

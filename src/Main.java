@@ -10,16 +10,26 @@ public class Main {
         Setup test = new Setup("D:\\University\\Stage 3\\Semester 2\\Software Engineering\\Assignment1\\src\\");
         ArrayList<String> classNames = test.getClassNames();
 
-        Class[] instances = new Class[classNames.size()];
+        Class[] components = new Class[classNames.size()];
 
         int index = 0;
         for(String cls: classNames)
         {
-            instances[index] = test.instantiateClass(cls);
+            components[index] = test.instantiateClass(cls);
             index++;
         }
 
-        System.out.println(Arrays.toString(instances));
+        System.out.println(Arrays.toString(components));
+
+        for(Class clazz: components)
+        {
+            if(clazz.getDeclaredMethods().length == 0)
+            {
+               System.out.println("Useless component: " + clazz.getName() + " is an interface with no methods");
+            }
+            else
+                System.out.println(Arrays.toString(clazz.getDeclaredMethods()));
+        }
 
 
     }
