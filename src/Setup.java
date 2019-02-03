@@ -1,18 +1,21 @@
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
 
 public class Setup {
 
     private File folder;
-    Setup(String classDir){ folder = new File(classDir); }
 
+    Setup(String smellyCodeDir){
+        this.folder = copyDir(smellyCodeDir, System.getProperty("user.dir")+"\\src\\TestSubject");
+    }
 
     private String getFileExtension(File file) {
         String name = file.getName();
@@ -32,7 +35,7 @@ public class Setup {
 
             for(File f: files)
             {
-                if(getFileExtension(f).equals(".class"))
+                if(getFileExtension(f).equals(".java"))
                 {
                     String className = f.getName().substring(0,f.getName().indexOf(".")); //removing .java extension from file name
                     classNames.add(className);
@@ -51,51 +54,24 @@ public class Setup {
         }
     }
 
-    public Class instantiateClass(String className) {
+    private File copyDir(String src, String dest) {
+
+        File srcDir = new File(src);
+        File destDir = new File(dest);
+        FileFilter filter = pathname -> {
+            if(pathname.toString().contains(".java"))
+                return true;
+           return false;
+        };
         try {
-
-            //convert the folder to URL format
-            URL url = folder.toURI().toURL();
-            URL[] urls = new URL[]{url};
-
-            URLClassLoader cl = new URLClassLoader(urls);
-
-            //load the current class, and execute constructor
-            Constructor<?>[] constructor = cl.loadClass(className).getConstructors();
-            if (constructor.length > 0) {
-                Constructor<?> c = constructor[0];
-                Class<?>[] types = c.getParameterTypes();
-                Object[] arguments = new Object[c.getParameterCount()];
-
-                int index = 0;
-                // Declaring variables required for the constructor
-                for (Class type : types) {
-                    if (type.isPrimitive()) {
-                        arguments[index] = 0;
-                    } else
-                        arguments[index] = null;
-                    index++;
-                }
-
-                System.out.println(className + " has been instantiated successfully.");
-
-                return c.newInstance(arguments).getClass();
-            }
-        }catch(ClassNotFoundException e)
-        {
-            e.printStackTrace();
-            System.out.println(className + " is not a valid class name");
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            e.printStackTrace();
-            System.out.println("Could not create new instance of class: " + className);
-        } catch (MalformedURLException e) {
+            FileUtils.copyDirectory(srcDir, destDir, filter);
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return new File(dest);
     }
 
-
-   /* public Class instantiateClass(String className) {
+   public Class instantiateClass(String className) {
 
         try {
             Constructor<?>[] constructor = Class.forName(className).getConstructors();
@@ -131,5 +107,5 @@ public class Setup {
             System.out.println("Could not create new instance of class: " + className);
         }
         return null;
-    }*/
+    }
 }
