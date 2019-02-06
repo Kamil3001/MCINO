@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -20,18 +19,6 @@ public class Main {
             index++;
         }
 
-        System.out.println(Arrays.toString(components));
-
-        for(Class clazz: components)
-        {
-            if(clazz.getDeclaredMethods().length == 0)
-            {
-               System.out.println("Useless component: " + clazz.getName() + " is an interface with no methods");
-            }
-            else
-                System.out.println(Arrays.toString(clazz.getDeclaredMethods()));
-        }
-
     }
 
     private static String getDirPath(){
@@ -44,3 +31,4 @@ public class Main {
         return path;
     }
 }
+

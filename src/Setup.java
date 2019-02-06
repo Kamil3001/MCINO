@@ -5,18 +5,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
 
 public class Setup {
 
-    private String smellyCodeDir;
     private ArrayList<String> classNames;
     private String classDir;
 
     Setup(String smellyCodeDir){
-        this.smellyCodeDir = smellyCodeDir;
         this.classNames = new ArrayList<>();
+        getFiles(smellyCodeDir);
     }
 
 
@@ -49,7 +47,6 @@ public class Setup {
 
 
     public ArrayList<String> getClassNames(){
-        getFiles(this.smellyCodeDir);
         return this.classNames;
     }
 
@@ -88,14 +85,15 @@ public class Setup {
             else if(cl.loadClass(className).isInterface())
             {
                 System.out.println(className + " is an interface, cannot be instantiated.");
-                return Class.forName(className);
+                return cl.loadClass(className);
             }
             else{
-                System.out.println(className + " is not a class, skipping instantiation..");
+                System.out.println(className + " is a class with no constructor, skipping instantiation.");
+                return cl.loadClass(className);
             }
         }catch(ClassNotFoundException e)
         {
-            //e.printStackTrace();
+            e.printStackTrace();
             System.out.println(className + " is not a valid class name");
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
