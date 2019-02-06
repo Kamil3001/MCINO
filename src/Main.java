@@ -1,34 +1,35 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws InterruptedException {
-
+    public static void main(String[] args) {
 
         /* CHANGE THE DIRECTORY WHERE YOU WOULD LIKE TO CHECK FOR SMELLY CODE */
-        Setup test = new Setup(getPathFromUser());
+        Setup test = new Setup("D:\\University\\Stage 3\\Semester 2\\Software Engineering\\Assignment1\\");
         ArrayList<String> classNames = test.getClassNames();
+        System.out.println("The classes which were found are :" + classNames);
 
-        Class[] instances = new Class[classNames.size()];
+        Class[] components = new Class[classNames.size()];
 
         int index = 0;
-        for (String cls : classNames) {
-            instances[index] = test.instantiateClass(cls);
+        for(String cls: classNames)
+        {
+            components[index] = test.instantiateClass(cls);
             index++;
         }
 
-        System.out.println(Arrays.toString(instances));
+        System.out.println(Arrays.toString(components));
 
+        for(Class clazz: components)
+        {
+            if(clazz.getDeclaredMethods().length == 0)
+            {
+               System.out.println("Useless component: " + clazz.getName() + " is an interface with no methods");
+            }
+            else
+                System.out.println(Arrays.toString(clazz.getDeclaredMethods()));
+        }
 
-    }
-
-    public static String getPathFromUser(){
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Path: ");
-        String path = sc.nextLine();
-        sc.close();
-        return path;
     }
 }
