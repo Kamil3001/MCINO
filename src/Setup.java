@@ -27,22 +27,22 @@ public class Setup {
         return name.substring(lastIndexOf);
     }
 
-    private void getFiles(String directoryName)
-    {
+    private void getFiles(String directoryName) {
         File directory = new File(directoryName);
         File[] fileList = directory.listFiles();
-           if(fileList != null) {
-               for (File file : fileList) {
-                   if (file.isFile() && getFileExtension(file).equals(".class")) {
-                       this.classDir = file.getAbsolutePath().substring(0,file.getAbsolutePath().indexOf(file.getName()));
-                       String className = file.getName().substring(0, file.getName().indexOf(".")); //removing .java extension from file name
-                       this.classNames.add(className);
-                   } else if (file.isDirectory()) {
-                       getFiles(file.getAbsolutePath());
-                   }
-               }
 
-           }
+        if(fileList != null) {
+            for (File file : fileList) {
+                if (file.isFile() && getFileExtension(file).equals(".class")) {
+                    this.classDir = file.getAbsolutePath().substring(0,file.getAbsolutePath().indexOf(file.getName()));
+                    String className = file.getName().substring(0, file.getName().indexOf(".")); //removing .java extension from file name
+                    this.classNames.add(className);
+                }
+                else if (file.isDirectory()) {
+                    getFiles(file.getAbsolutePath());
+                }
+            }
+        }
     }
 
 
@@ -51,7 +51,7 @@ public class Setup {
     }
 
 
-   public Class instantiateClass(String className) {
+    public Class instantiateClass(String className) {
 
         try {
             //convert the folder to URL format
@@ -62,7 +62,7 @@ public class Setup {
             URLClassLoader cl = new URLClassLoader(urls);
             Constructor<?>[] constructor = cl.loadClass(className).getConstructors();
 
-            if(constructor.length>0) {
+            if(constructor.length > 0) {
                 Constructor<?> c = constructor[0];
                 Class<?>[] types = c.getParameterTypes();
                 Object[] arguments = new Object[c.getParameterCount()];
@@ -72,7 +72,8 @@ public class Setup {
                 for (Class type : types) {
                     if (type.isPrimitive()) {
                         arguments[index] = 0;
-                    } else
+                    }
+                    else
                         arguments[index] = null;
                     index++;
                 }
@@ -82,15 +83,12 @@ public class Setup {
 
                 return cls;
             }
-            else if(cl.loadClass(className).isInterface())
+            else
             {
-                System.out.println(className + " is an interface, cannot be instantiated.");
+                System.out.println(className + " is not a class, cannot be instantiated.");
                 return cl.loadClass(className);
             }
-            else{
-                System.out.println(className + " is a class with no constructor, skipping instantiation.");
-                return cl.loadClass(className);
-            }
+
         }catch(ClassNotFoundException e)
         {
             e.printStackTrace();
