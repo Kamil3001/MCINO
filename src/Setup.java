@@ -1,21 +1,24 @@
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
 
 public class Setup {
 
-    private File folder;
+    private String smellyCodeDir;
+    private ArrayList<String> classNames;
+    private String classDir;
 
     Setup(String smellyCodeDir){
-        this.folder = copyDir(smellyCodeDir, System.getProperty("user.dir")+"\\src\\TestSubject");
+        this.smellyCodeDir = smellyCodeDir;
+        this.classNames = new ArrayList<>();
     }
+
 
     private String getFileExtension(File file) {
         String name = file.getName();
@@ -26,55 +29,42 @@ public class Setup {
         return name.substring(lastIndexOf);
     }
 
-    public ArrayList<String> getClassNames() {
+    private void getFiles(String directoryName)
+    {
+        File directory = new File(directoryName);
+        File[] fileList = directory.listFiles();
+           if(fileList != null) {
+               for (File file : fileList) {
+                   if (file.isFile() && getFileExtension(file).equals(".class")) {
+                       this.classDir = file.getAbsolutePath().substring(0,file.getAbsolutePath().indexOf(file.getName()));
+                       String className = file.getName().substring(0, file.getName().indexOf(".")); //removing .java extension from file name
+                       this.classNames.add(className);
+                   } else if (file.isDirectory()) {
+                       getFiles(file.getAbsolutePath());
+                   }
+               }
 
-        if(folder.isDirectory())
-        {
-            File[] files = folder.listFiles();
-            ArrayList<String> classNames = new ArrayList<>();
-
-            for(File f: files)
-            {
-                if(getFileExtension(f).equals(".java"))
-                {
-                    String className = f.getName().substring(0,f.getName().indexOf(".")); //removing .java extension from file name
-                    classNames.add(className);
-                }
-            }
-            System.out.println("Given directory has the following classes: " + classNames);
-            return classNames;
-        }
-        else{
-            try {
-                throw new NotDirectoryException("Given directory does not exists");
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
+           }
     }
 
-    private File copyDir(String src, String dest) {
 
-        File srcDir = new File(src);
-        File destDir = new File(dest);
-        FileFilter filter = pathname -> {
-            if(pathname.toString().contains(".java"))
-                return true;
-           return false;
-        };
-        try {
-            FileUtils.copyDirectory(srcDir, destDir, filter);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new File(dest);
+    public ArrayList<String> getClassNames(){
+        getFiles(this.smellyCodeDir);
+        return this.classNames;
     }
+
 
    public Class instantiateClass(String className) {
 
         try {
-            Constructor<?>[] constructor = Class.forName(className).getConstructors();
+            //convert the folder to URL format
+            File folder = new File(this.classDir);
+            URL url = folder.toURI().toURL();
+            URL[] urls = new URL[]{url};
+
+            URLClassLoader cl = new URLClassLoader(urls);
+            Constructor<?>[] constructor = cl.loadClass(className).getConstructors();
+
             if(constructor.length>0) {
                 Constructor<?> c = constructor[0];
                 Class<?>[] types = c.getParameterTypes();
@@ -95,7 +85,7 @@ public class Setup {
 
                 return cls;
             }
-            else if(Class.forName(className).isInterface())
+            else if(cl.loadClass(className).isInterface())
             {
                 System.out.println(className + " is an interface, cannot be instantiated.");
                 return Class.forName(className);
@@ -110,7 +100,10 @@ public class Setup {
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
             System.out.println("Could not create new instance of class: " + className);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
         }
-        return null;
+       return null;
     }
+
 }

@@ -3,12 +3,12 @@ import java.util.Arrays;
 
 public class Main {
 
-    public static void main(String[] args) throws InterruptedException {
-
+    public static void main(String[] args) {
 
         /* CHANGE THE DIRECTORY WHERE YOU WOULD LIKE TO CHECK FOR SMELLY CODE */
-        Setup test = new Setup("D:\\University\\Stage 3\\Semester 2\\Software Engineering\\Assignment1\\src\\");
+        Setup test = new Setup("D:\\University\\Stage 3\\Semester 2\\Software Engineering\\Assignment1\\");
         ArrayList<String> classNames = test.getClassNames();
+        System.out.println("The classes which were found are :" + classNames);
 
         Class[] components = new Class[classNames.size()];
 
@@ -30,7 +30,6 @@ public class Main {
             else
                 System.out.println(Arrays.toString(clazz.getDeclaredMethods()));
         }
-
 
     }
 }
