@@ -1,4 +1,3 @@
-
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -11,10 +10,12 @@ public class Setup {
 
     private ArrayList<String> classNames;
     private String classDir;
+    private Class[] classes;
 
     Setup(String smellyCodeDir){
         this.classNames = new ArrayList<>();
-        getFiles(smellyCodeDir);
+        findClassNames(smellyCodeDir);
+        classes = new Class[classNames.size()];
     }
 
 
@@ -27,31 +28,54 @@ public class Setup {
         return name.substring(lastIndexOf);
     }
 
-    private void getFiles(String directoryName) {
-        File directory = new File(directoryName);
+    private void findClassNames(String smellyCodeDir)
+    {
+        boolean found = getDirectory(smellyCodeDir);
+        if(found){
+            getFiles();
+        }
+    }
+
+    private void getFiles() {
+        File directory = new File(this.classDir);
         File[] fileList = directory.listFiles();
 
-        if(fileList != null) {
-            for (File file : fileList) {
-                if (file.isFile() && getFileExtension(file).equals(".class")) {
-                    this.classDir = file.getAbsolutePath().substring(0,file.getAbsolutePath().indexOf(file.getName()));
-                    String className = file.getName().substring(0, file.getName().indexOf(".")); //removing .java extension from file name
-                    this.classNames.add(className);
-                }
-                else if (file.isDirectory()) {
-                    getFiles(file.getAbsolutePath());
-                }
+        for (File file : fileList) {
+            if (getFileExtension(file).equals(".class")) {
+                String className = file.getName().substring(0, file.getName().indexOf(".")); //removing .class extension from file name
+                this.classNames.add(className);
             }
         }
     }
 
+    private boolean getDirectory(String directoryName)
+    {
+        File directory = new File(directoryName);
+        File[] fileList = directory.listFiles();
 
-    public ArrayList<String> getClassNames(){
-        return this.classNames;
+        boolean found = false;
+
+        int i = 0;
+
+        if(fileList.length > 0) {
+            while (i < fileList.length && !found) {
+                if (fileList[i].isDirectory()) {
+                    found = getDirectory(fileList[i].getAbsolutePath());
+                }
+                if(getFileExtension(fileList[i]).equals(".class"))
+                {
+                    this.classDir = fileList[i].getAbsolutePath().substring(0,fileList[i].getAbsolutePath().indexOf(fileList[i].getName()));
+                    found = true;
+                }
+                i++;
+            }
+            return found;
+        }
+        return false;
     }
 
 
-    public Class instantiateClass(String className) {
+    private Class instantiateClass(String className) {
 
         try {
             //convert the folder to URL format
@@ -99,7 +123,30 @@ public class Setup {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-       return null;
+        return null;
+    }
+
+    public Class[] run()
+    {
+        int index = 0;
+        for(String clazz: classNames)
+        {
+            classes[index] = instantiateClass(clazz);
+            System.out.println("Name: " + classes[index].getName());
+            index++;
+        }
+
+        return this.classes;
+    }
+
+    public ArrayList<String> getClassNames()
+    {
+        return this.classNames;
+    }
+
+    public String getClassDir()
+    {
+        return this.classDir;
     }
 
 }

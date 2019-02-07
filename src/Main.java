@@ -1,5 +1,3 @@
-import java.lang.reflect.*;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -7,32 +5,9 @@ public class Main {
     public static void main(String[] args) {
 
         /* CHANGE THE DIRECTORY WHERE YOU WOULD LIKE TO CHECK FOR SMELLY CODE */
-        Setup test = new Setup(getDirPath());
-        ArrayList<String> classNames = test.getClassNames();
-        System.out.println("The .class files found are :" + classNames + "\n");
-
-        Class[] components = new Class[classNames.size()];
-
-        int index = 0;
-        for(String cls: classNames)
-        {
-            components[index] = test.instantiateClass(cls);
-            System.out.println("Name: " + components[index].getName());
-
-            String methods = "[";
-            for(Method m : components[index].getDeclaredMethods())
-                methods += m.getName() + ", ";
-
-            if(methods.equals("["))
-                methods += "]";
-            else{
-                methods = methods.substring(0, methods.length()-2);
-                methods += "]";
-            }
-
-            System.out.println("Methods: " + methods + "\n");
-            index++;
-        }
+        Setup setup = new Setup(getDirPath());
+        Class[] classes = setup.run();
+        System.out.println("The .class files found are :" + setup.getClassNames() + "\n");
 
     }
 
@@ -46,4 +21,3 @@ public class Main {
         return path;
     }
 }
-
