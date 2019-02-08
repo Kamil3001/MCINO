@@ -1,10 +1,12 @@
 package smells;
 
+import metrics.Metrics;
+
 public abstract class AbstractCodeSmell implements Scorable {
     protected int occurrenceCount;
     protected String[] occurrences;
 
-    protected abstract String detectSmells(Class[] classes);
+    protected abstract String detectSmell();
 
     public String[] getOccurrences(){
         return occurrences;

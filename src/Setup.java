@@ -12,9 +12,9 @@ public class Setup {
     private String classDir;
     private Class[] classes;
 
-    Setup(String smellyCodeDir){
+    Setup(String dirPath){
         this.classNames = new ArrayList<>();
-        findClassNames(smellyCodeDir);
+        findClassNames(dirPath);
         classes = new Class[classNames.size()];
     }
 
@@ -22,16 +22,16 @@ public class Setup {
     private String getFileExtension(File file) {
         String name = file.getName();
         int lastIndexOf = name.lastIndexOf(".");
+
         if (lastIndexOf == -1) {
             return ""; // empty extension
         }
+
         return name.substring(lastIndexOf);
     }
 
-    private void findClassNames(String smellyCodeDir)
-    {
-        boolean found = getDirectory(smellyCodeDir);
-        if(found){
+    private void findClassNames(String smellyCodeDir) {
+        if(getDirectory(smellyCodeDir)){
             getFiles();
         }
     }
@@ -109,7 +109,7 @@ public class Setup {
             }
             else
             {
-                System.out.println(className + " is not a class, cannot be instantiated.");
+                System.out.println(className + " has been instantiated successfully.");
                 return cl.loadClass(className);
             }
 
@@ -148,5 +148,4 @@ public class Setup {
     {
         return this.classDir;
     }
-
 }
