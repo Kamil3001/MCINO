@@ -5,9 +5,11 @@ import java.util.HashMap;
 
 public class Metrics {
     private Class cls;
-    private int numOfPublicFields;
-    private int numOfPublicMethods;
     private int classLength;
+    private int numOfFields;
+    private int numOfPublicFields;
+    private int numOfMethods;
+    private int numOfPublicMethods;
     private HashMap<Method,Integer> methodLengths;
     private HashMap<Method, Integer> paramsPerMethod;
 
@@ -17,6 +19,20 @@ public class Metrics {
     }
 
     private void extractMetrics(){
+        extractClassLength();
+        extractNumOfFields();
+        extractMethodMetrics();
+    }
+
+    private void extractClassLength(){
+
+    }
+
+    private void extractNumOfFields(){
+
+    }
+
+    private void extractMethodMetrics(){
 
     }
 
