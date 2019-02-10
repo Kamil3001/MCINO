@@ -1,9 +1,12 @@
 import metrics.Metrics;
+import utils.Setup;
+
+import java.io.File;
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         /* CHANGE THE DIRECTORY WHERE YOU WOULD LIKE TO CHECK FOR SMELLY CODE */
         Setup setup = new Setup(getPathFromUser());
@@ -19,9 +22,6 @@ public class Main {
             System.out.println("---------------");
             System.out.println();
         }
-
-        System.out.println("The .class files found are :" + setup.getClassNames() + "\n");
-
     }
 
     private static String getPathFromUser(){

@@ -1,3 +1,5 @@
+package utils;
+
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -12,7 +14,7 @@ public class Setup {
     private String classDir;
     private Class[] classes;
 
-    Setup(String dirPath){
+    public Setup(String dirPath){
         this.classNames = new ArrayList<>();
         findClassNames(dirPath);
         classes = new Class[classNames.size()];
