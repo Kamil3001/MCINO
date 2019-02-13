@@ -151,8 +151,8 @@ public class Setup {
                 {
                     return cl.loadClass(className);
 
-                }
-                return cl.loadClass(pckg+"."+className);
+                }else
+                    return cl.loadClass(pckg+"."+className);
             }
 
         }catch(ClassNotFoundException e)
@@ -172,7 +172,8 @@ public class Setup {
 
     public Class[] run()
     {
-        System.out.println(classNames);
+        System.out.println("\nClasses found in " + this.dirPath + ":");
+        System.out.println(classNames + "\n");
         int index = 0;
         for(String clazz: classNames)
         {
@@ -180,6 +181,7 @@ public class Setup {
             index++;
         }
 
+        System.out.println();
 
 
         return this.classes;

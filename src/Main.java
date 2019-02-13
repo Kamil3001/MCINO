@@ -16,11 +16,11 @@ public class Main {
         for(Class c : classes){
 
                 Metrics m = new Metrics(c);
-                System.out.println(c.getName());
-                System.out.println(m.getNumOfFields());
-                System.out.println(m.getNumOfPublicFields());
-                System.out.println(m.getNumOfMethods());
-                System.out.println(m.getNumOfPublicMethods());
+                System.out.println("Name: " + c.getName());
+                System.out.println("Number of fields: " + m.getNumOfFields());
+                System.out.println("Number of public fields: " + m.getNumOfPublicFields());
+                System.out.println("Number of methods: " + m.getNumOfMethods());
+                System.out.println("Number of public methods: " + m.getNumOfPublicMethods());
                 System.out.println("---------------");
                 System.out.println();
         }
