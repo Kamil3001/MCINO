@@ -1,6 +1,7 @@
 import com.github.javaparser.ast.CompilationUnit;
 import utils.Setup;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class MainGUI {
@@ -9,6 +10,10 @@ public class MainGUI {
         Setup setup = new Setup(getPathFromUser());
 
         CompilationUnit[] cUnit = setup.run();
+        String[] fileNames = setup.getFileNames();
+
+        System.out.println(Arrays.toString(fileNames));
+
     }
 
     private static String getPathFromUser(){

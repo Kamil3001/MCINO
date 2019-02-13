@@ -5,9 +5,6 @@ import com.github.javaparser.ast.CompilationUnit;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Array;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -18,9 +15,6 @@ public class Setup {
     private String javaDir;
     private File[] files;
     private HashMap<String, String> javaFiles;
-
-
-
 
     public Setup(String dirPath){
         this.dirPath = dirPath;
@@ -132,5 +126,17 @@ public class Setup {
 
         return cUnit;
 
+    }
+
+    public String[] getFileNames()
+    {
+        String[] fileNames = new String[javaFiles.keySet().size()];
+        int index = 0;
+        for(Map.Entry<String, String> code: javaFiles.entrySet())
+        {
+            fileNames[index] = code.getKey();
+            index++;
+        }
+        return fileNames;
     }
 }
