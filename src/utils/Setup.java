@@ -7,15 +7,22 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Setup {
 
     private ArrayList<String> classNames;
+    private String dirPath;
     private String classDir;
     private Class[] classes;
+    private File[] files;
+    private URL[] urls = new URL[7];
+    private int ind = 0;
 
-    public Setup(String dirPath){
+
+    public Setup(String dirPath) throws MalformedURLException {
         this.classNames = new ArrayList<>();
+        this.dirPath = dirPath;
         findClassNames(dirPath);
         classes = new Class[classNames.size()];
     }
@@ -32,26 +39,41 @@ public class Setup {
         return name.substring(lastIndexOf);
     }
 
-    private void findClassNames(String smellyCodeDir) {
+    private void findClassNames(String smellyCodeDir) throws MalformedURLException {
         if(getDirectory(smellyCodeDir)){
             getFiles();
+            for(File f: this.files)
+            {
+                if(f.isDirectory()) {
+                    findClassNames(f.getAbsolutePath());
+
+                }
+            }
         }
     }
 
-    private void getFiles() {
+    private void getFiles() throws MalformedURLException {
         File directory = new File(this.classDir);
-        File[] fileList = directory.listFiles();
+        this.files = directory.listFiles();
 
-        for (File file : fileList) {
-            if (getFileExtension(file).equals(".class")) {
+        for (File file : this.files) {
+            if (isClass(file)) {
+                urls[ind] = file.getParentFile().toURI().toURL();
+                ind++;
                 String className = file.getName().substring(0, file.getName().indexOf(".")); //removing .class extension from file name
                 this.classNames.add(className);
             }
         }
     }
 
+    private boolean isClass(File file)
+    {
+        return getFileExtension(file).equals(".class");
+    }
+
     private boolean getDirectory(String directoryName)
     {
+
         File directory = new File(directoryName);
         File[] fileList = directory.listFiles();
 
@@ -64,7 +86,7 @@ public class Setup {
                 if (fileList[i].isDirectory()) {
                     found = getDirectory(fileList[i].getAbsolutePath());
                 }
-                if(getFileExtension(fileList[i]).equals(".class"))
+                else if(isClass(fileList[i]))
                 {
                     this.classDir = fileList[i].getAbsolutePath().substring(0,fileList[i].getAbsolutePath().indexOf(fileList[i].getName()));
                     found = true;
@@ -80,19 +102,29 @@ public class Setup {
     private Class instantiateClass(String className) {
 
         try {
-            //convert the folder to URL format
-            File folder = new File(this.classDir);
-            URL url = folder.toURI().toURL();
-            URL[] urls = new URL[]{url};
+            URLClassLoader cl = new URLClassLoader(this.urls,Thread.currentThread().getContextClassLoader());
+            String dir = cl.findResource(className+".class").toString();
+            String pckg = dir.substring(0,dir.lastIndexOf("/"));
+            pckg = pckg.substring(pckg.lastIndexOf("/")+1);
 
-            URLClassLoader cl = new URLClassLoader(urls);
-            Constructor<?>[] constructor = cl.loadClass(className).getConstructors();
+            String userDir = this.dirPath;
+            String project = userDir.substring(userDir.lastIndexOf("\\")+1);
 
-            if(constructor.length > 0) {
+
+            Constructor<?>[] constructor;
+            if(pckg.equals(project))
+            {
+                constructor = cl.loadClass(className).getDeclaredConstructors();
+
+            }
+            else {
+                constructor = cl.loadClass(pckg + "." + className).getDeclaredConstructors();
+            }
+
+            if(constructor.length > 1) {
                 Constructor<?> c = constructor[0];
                 Class<?>[] types = c.getParameterTypes();
                 Object[] arguments = new Object[c.getParameterCount()];
-
                 int index = 0;
                 // Declaring variables required for the constructor
                 for (Class type : types) {
@@ -104,6 +136,7 @@ public class Setup {
                     index++;
                 }
 
+
                 Class cls = c.newInstance(arguments).getClass();
                 System.out.println(className + " has been instantiated successfully.");
 
@@ -111,18 +144,27 @@ public class Setup {
             }
             else
             {
+                // If its main or an abstract class
                 System.out.println(className + " has been instantiated successfully.");
-                return cl.loadClass(className);
+
+                if(pckg.equals(project))
+                {
+                    return cl.loadClass(className);
+
+                }
+                return cl.loadClass(pckg+"."+className);
             }
 
         }catch(ClassNotFoundException e)
         {
             e.printStackTrace();
             System.out.println(className + " is not a valid class name");
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+        } catch (IllegalAccessException  e){
             e.printStackTrace();
             System.out.println("Could not create new instance of class: " + className);
-        } catch (MalformedURLException e) {
+        } catch (InvocationTargetException e) {
+            e.getTargetException();
+        } catch (InstantiationException e) {
             e.printStackTrace();
         }
         return null;
@@ -130,13 +172,15 @@ public class Setup {
 
     public Class[] run()
     {
+        System.out.println(classNames);
         int index = 0;
         for(String clazz: classNames)
         {
             classes[index] = instantiateClass(clazz);
-            System.out.println("Name: " + classes[index].getName());
             index++;
         }
+
+
 
         return this.classes;
     }

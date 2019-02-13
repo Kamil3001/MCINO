@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 
 public class Metrics {
+
     private Class cls;
     private int classLength;
     private int numOfFields;

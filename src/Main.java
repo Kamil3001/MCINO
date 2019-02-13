@@ -12,15 +12,17 @@ public class Main {
         Setup setup = new Setup(getPathFromUser());
         Class[] classes = setup.run();
 
+
         for(Class c : classes){
-            Metrics m = new Metrics(c);
-            System.out.println(c.getName());
-            System.out.println(m.getNumOfFields());
-            System.out.println(m.getNumOfPublicFields());
-            System.out.println(m.getNumOfMethods());
-            System.out.println(m.getNumOfPublicMethods());
-            System.out.println("---------------");
-            System.out.println();
+
+                Metrics m = new Metrics(c);
+                System.out.println(c.getName());
+                System.out.println(m.getNumOfFields());
+                System.out.println(m.getNumOfPublicFields());
+                System.out.println(m.getNumOfMethods());
+                System.out.println(m.getNumOfPublicMethods());
+                System.out.println("---------------");
+                System.out.println();
         }
     }
 
@@ -31,7 +33,7 @@ public class Main {
         String path = sc.nextLine();
 
         if(path.equalsIgnoreCase("self")){
-            path = "./";
+            path = System.getProperty("user.dir");
         }
 
         sc.close();
