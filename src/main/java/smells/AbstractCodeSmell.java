@@ -1,6 +1,6 @@
 package smells;
 
-import metrics.Metrics;
+import metrics.ClassMetrics;
 
 public abstract class AbstractCodeSmell implements Scorable {
     protected int occurrenceCount;

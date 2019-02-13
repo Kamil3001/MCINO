@@ -7,4 +7,3 @@ public class SmellDetector {
     }
 
 }
-asdsad
