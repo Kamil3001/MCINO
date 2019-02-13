@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Setup {
 
@@ -103,12 +102,12 @@ public class Setup {
 
         try {
             URLClassLoader cl = new URLClassLoader(this.urls,Thread.currentThread().getContextClassLoader());
+
             String dir = cl.findResource(className+".class").toString();
             String pckg = dir.substring(0,dir.lastIndexOf("/"));
             pckg = pckg.substring(pckg.lastIndexOf("/")+1);
 
-            String userDir = this.dirPath;
-            String project = userDir.substring(userDir.lastIndexOf("\\")+1);
+            String project = this.dirPath.substring(this.dirPath.lastIndexOf("\\")+1);
 
 
             Constructor<?>[] constructor;
