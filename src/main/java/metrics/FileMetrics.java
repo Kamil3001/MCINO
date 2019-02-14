@@ -63,7 +63,6 @@ public class FileMetrics {
     private void extractMethodsMetrics(){
         for(TypeDeclaration td : cu.getTypes()){
             List<MethodDeclaration> mds = td.getMethods();
-
             for(MethodDeclaration md : mds){
                 numOfMethods++;
                 if(md.isPublic())
@@ -109,3 +108,6 @@ public class FileMetrics {
         return cu;
     }
 }
+
+
+//TODO Extract private class Listener from MainGUI

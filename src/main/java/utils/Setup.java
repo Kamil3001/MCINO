@@ -107,6 +107,8 @@ public class Setup {
         CompilationUnit[] cUnit = new CompilationUnit[javaFiles.keySet().size()];
         int index = 0;
 
+        System.out.println(javaFiles.keySet());
+
         for(Map.Entry<String, String> code: javaFiles.entrySet())
         {
             cUnit[index] = JavaParser.parse(code.getValue());

@@ -33,7 +33,7 @@ public class MainGUI extends JPanel {
         log.setMargin(new Insets(5,5,5,5));
         log.setEditable(false);
         log.append("\t ------ Welcome to MCINO v1.0 ------" +newline);
-        log.append("\t---- NOSEJOB PREMIUM EDITION ----" +newline);
+        log.append("\t              ~~~~ NOSEJOB ~~~~" +newline);
         JScrollPane logScrollPane = new JScrollPane(log);
 
         fc = new JFileChooser();
@@ -43,7 +43,7 @@ public class MainGUI extends JPanel {
         findDir = new JButton("Find Directory...");
         findDir.addActionListener(new Listener());
 
-        JPanel buttonPanel = new JPanel(); //use FlowLayout
+        JPanel buttonPanel = new JPanel();
         buttonPanel.add(findDir);
 
         add(buttonPanel, BorderLayout.PAGE_START);
@@ -67,8 +67,6 @@ public class MainGUI extends JPanel {
     public static void main(String[] args)
     {
         launchGUI();
-
-
     }
 
     private class Listener implements ActionListener{
@@ -83,16 +81,18 @@ public class MainGUI extends JPanel {
                     log.append("Directory chosen: " + file.getName() + newline);
                     setup = new Setup(file.getAbsolutePath());
                     cUnit = setup.run();
-                    frame.dispose();
 
-                    FileMetrics classMetricsclass = new FileMetrics(cUnit[3]);
-                    System.out.println("------------------");
-                    System.out.println(classMetricsclass.getClassNames());
-                    System.out.println(classMetricsclass.getClassLengths());
-                    System.out.println(classMetricsclass.getNumOfFields());
-                    System.out.println(classMetricsclass.getNumOfPublicFields());
-                    System.out.println(classMetricsclass.getNumOfMethods());
-                    System.out.println(classMetricsclass.getNumOfPublicMethods());
+                    for(CompilationUnit cu: cUnit) {
+                        FileMetrics classMetricsclass = new FileMetrics(cu);
+                        log.append("------------------" + newline);
+                        log.append("Class name: " + classMetricsclass.getClassNames().toString() + newline);
+                        log.append("Class length: " + classMetricsclass.getClassLengths().toString() + newline);
+                        log.append("Num fields: " + classMetricsclass.getNumOfFields() + newline);
+                        log.append("Num public fields: " + classMetricsclass.getNumOfPublicFields() + newline);
+                        log.append("Num methods: " + classMetricsclass.getNumOfMethods() + newline);
+                        log.append("Num public methods: " + classMetricsclass.getNumOfPublicMethods() + newline);
+                        log.append(newline);
+                    }
 
             } else {
                 log.append("Open command cancelled by user." + newline);
