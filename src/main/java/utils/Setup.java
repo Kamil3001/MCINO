@@ -21,10 +21,6 @@ public class Setup {
         javaFiles = new HashMap<>();
         findJavaFiles(dirPath);
     }
-    /*
-    Setup finds all java files and creates compilation units that
-    can then be used to extract info in Metrics and Smell classes
-     */
 
     private void getFiles() {
         File directory = new File(this.javaDir);
@@ -110,11 +106,6 @@ public class Setup {
 
 
     public CompilationUnit[] run(){
-        //TODO
-
-        System.out.println("\nClasses found in " + this.dirPath + ":");
-        System.out.println(javaFiles.keySet() + "\n");
-
         CompilationUnit[] cUnit = new CompilationUnit[javaFiles.keySet().size()];
         int index = 0;
 

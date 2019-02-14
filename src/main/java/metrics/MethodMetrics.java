@@ -2,18 +2,19 @@ package metrics;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
 
-public class MethodMetrics {
+class MethodMetrics {
     private int numOfParams;
     private int numOfLines;
-    private MethodDeclaration md;
 
     MethodMetrics(MethodDeclaration md){
-        this.md = md;
-        computeMetrics();
+        computeMetrics(md);
     }
 
-    private void computeMetrics(){
-        numOfLines = md.getTokenRange().get().getEnd().getRange().get().begin.line;
+    //Exracting number of lines and parameters of the method from MethodDeclaration
+    private void computeMetrics(MethodDeclaration md){
+        String body = md.getBody().toString();
+        numOfLines = body.length() - body.replace("\n", "").length();
+
         numOfParams = md.getParameters().size();
     }
 

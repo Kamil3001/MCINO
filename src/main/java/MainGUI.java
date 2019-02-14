@@ -1,12 +1,6 @@
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.TypeDeclaration;
-import com.github.javaparser.ast.visitor.VoidVisitor;
+import metrics.FileMetrics;
 import utils.Setup;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class MainGUI {
@@ -16,7 +10,16 @@ public class MainGUI {
         CompilationUnit[] cUnit = setup.run();
         String[] fileNames = setup.getFileNames();
 
-        for(CompilationUnit cu : cUnit) {
+        FileMetrics classMetricsclass = new FileMetrics(cUnit[3]);
+        System.out.println("------------------");
+        System.out.println(classMetricsclass.getClassNames());
+        System.out.println(classMetricsclass.getClassLengths());
+        System.out.println(classMetricsclass.getNumOfFields());
+        System.out.println(classMetricsclass.getNumOfPublicFields());
+        System.out.println(classMetricsclass.getNumOfMethods());
+        System.out.println(classMetricsclass.getNumOfPublicMethods());
+
+        /*for(CompilationUnit cu : cUnit) {
             for (TypeDeclaration t : cu.getTypes()) {
                 List<MethodDeclaration> mds = t.getMethods();
                 for(MethodDeclaration md : mds){
@@ -24,7 +27,7 @@ public class MainGUI {
                 }
                 //System.out.println(t.getName());
             }
-        }
+        }*/
     }
 
     private static String getPathFromUser(){
