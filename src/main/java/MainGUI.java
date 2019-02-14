@@ -38,7 +38,7 @@ public class MainGUI extends JPanel {
 
         fc = new JFileChooser();
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
+        fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
         findDir = new JButton("Find Directory...");
         findDir.addActionListener(new Listener());
