@@ -11,17 +11,13 @@ import java.io.File;
 public class MainGUI extends JPanel {
 
     static private final String newline = "\n";
-    private static Setup setup;
 
-    private static JFrame frame;
     private JButton findDir;
     private JTextArea log;
     private JFileChooser fc;
 
-    private CompilationUnit[] cUnit;
 
-
-    public MainGUI() {
+    private MainGUI() {
         super(new BorderLayout());
         init();
 
@@ -52,7 +48,7 @@ public class MainGUI extends JPanel {
 
     private static void launchGUI() {
         //Create and set up the window.
-        frame = new JFrame("NoseJob");
+        JFrame frame = new JFrame("NoseJob");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Add content to the window.
@@ -79,8 +75,8 @@ public class MainGUI extends JPanel {
                     File file = fc.getSelectedFile();
                     //This is where a real application would open the file.
                     log.append("Directory chosen: " + file.getName() + newline);
-                    setup = new Setup(file.getAbsolutePath());
-                    cUnit = setup.run();
+                    Setup setup = new Setup(file.getAbsolutePath());
+                    CompilationUnit[] cUnit = setup.run();
 
                     for(CompilationUnit cu: cUnit) {
                         FileMetrics classMetricsclass = new FileMetrics(cu);
