@@ -1,45 +1,108 @@
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import metrics.FileMetrics;
 import utils.Setup;
-import java.util.Scanner;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.List;
 
-public class MainGUI {
+public class MainGUI extends JPanel {
 
-    public static void main(String args[]) {
-        Setup setup = new Setup(getPathFromUser());
-        CompilationUnit[] cUnit = setup.run();
+    static private final String newline = "\n";
+    private static Setup setup;
 
-        FileMetrics classMetricsclass = new FileMetrics(cUnit[3]);
-        System.out.println("------------------");
-        System.out.println(classMetricsclass.getClassNames());
-        System.out.println(classMetricsclass.getClassLengths());
-        System.out.println(classMetricsclass.getNumOfFields());
-        System.out.println(classMetricsclass.getNumOfPublicFields());
-        System.out.println(classMetricsclass.getNumOfMethods());
-        System.out.println(classMetricsclass.getNumOfPublicMethods());
+    private static JFrame frame;
+    private JButton findDir;
+    private JTextArea log;
+    private JFileChooser fc;
 
-        /*for(CompilationUnit cu : cUnit) {
-            for (TypeDeclaration t : cu.getTypes()) {
-                List<MethodDeclaration> mds = t.getMethods();
-                for(MethodDeclaration md : mds){
-                    System.out.println(md.getName());
-                }
-                //System.out.println(t.getName());
+    private CompilationUnit[] cUnit;
+
+
+    public MainGUI() {
+        super(new BorderLayout());
+        init();
+
+    }
+
+    private void init()
+    {
+        log = new JTextArea(5,40);
+        log.setMargin(new Insets(5,5,5,5));
+        log.setEditable(false);
+        log.append("\t ------ Welcome to MCINO v1.0 ------" +newline);
+        log.append("\t---- NOSEJOB PREMIUM EDITION ----" +newline);
+        JScrollPane logScrollPane = new JScrollPane(log);
+
+        fc = new JFileChooser();
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+
+        findDir = new JButton("Find Directory...");
+        findDir.addActionListener(new Listener());
+
+        JPanel buttonPanel = new JPanel(); //use FlowLayout
+        buttonPanel.add(findDir);
+
+        add(buttonPanel, BorderLayout.PAGE_START);
+        add(logScrollPane, BorderLayout.CENTER);
+    }
+
+    private static void launchGUI() {
+        //Create and set up the window.
+        frame = new JFrame("NoseJob");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        //Add content to the window.
+        frame.add(new MainGUI());
+
+        //Display the window.
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+
+    public static void main(String[] args)
+    {
+        launchGUI();
+
+
+    }
+
+    private class Listener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == findDir) {
+                int returnVal = fc.showOpenDialog(MainGUI.this);
+
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    //This is where a real application would open the file.
+                    log.append("Directory chosen: " + file.getName() + newline);
+                    setup = new Setup(file.getAbsolutePath());
+                    cUnit = setup.run();
+                    frame.dispose();
+
+                    FileMetrics classMetricsclass = new FileMetrics(cUnit[3]);
+                    System.out.println("------------------");
+                    System.out.println(classMetricsclass.getClassNames());
+                    System.out.println(classMetricsclass.getClassLengths());
+                    System.out.println(classMetricsclass.getNumOfFields());
+                    System.out.println(classMetricsclass.getNumOfPublicFields());
+                    System.out.println(classMetricsclass.getNumOfMethods());
+                    System.out.println(classMetricsclass.getNumOfPublicMethods());
+
+            } else {
+                log.append("Open command cancelled by user." + newline);
             }
-        }*/
-    }
-
-    private static String getPathFromUser(){
-        Scanner sc = new Scanner(System.in);
-
-        System.out.print("Input path of directory or type 'self' to perform self analysis: ");
-        String path = sc.nextLine();
-
-        if(path.equalsIgnoreCase("self")){
-            path = System.getProperty("user.dir");
+            log.setCaretPosition(log.getDocument().getLength());
         }
-
-        sc.close();
-        return path;
     }
+}
+
+
 }
