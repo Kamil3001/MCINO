@@ -11,13 +11,11 @@ import java.util.Scanner;
 
 public class Setup {
 
-    private String dirPath;
     private String javaDir;
     private File[] files;
     private HashMap<String, String> javaFiles;
 
     public Setup(String dirPath){
-        this.dirPath = dirPath;
         javaFiles = new HashMap<>();
         findJavaFiles(dirPath);
     }
@@ -36,7 +34,7 @@ public class Setup {
                     StringBuilder code = new StringBuilder();
                     while(sc.hasNextLine())
                     {
-                       code.append(sc.nextLine()+"\n");
+                       code.append(sc.nextLine()).append("\n");
                     }
                     sc.close();
 
@@ -119,7 +117,7 @@ public class Setup {
 
     }
 
-    public String[] getFileNames()
+    /*public String[] getFileNames()
     {
         String[] fileNames = new String[javaFiles.keySet().size()];
         int index = 0;
@@ -129,5 +127,5 @@ public class Setup {
             index++;
         }
         return fileNames;
-    }
+    }*/
 }

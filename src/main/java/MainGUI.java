@@ -8,7 +8,6 @@ public class MainGUI {
     public static void main(String args[]) {
         Setup setup = new Setup(getPathFromUser());
         CompilationUnit[] cUnit = setup.run();
-        String[] fileNames = setup.getFileNames();
 
         FileMetrics classMetricsclass = new FileMetrics(cUnit[3]);
         System.out.println("------------------");
