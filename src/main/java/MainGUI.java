@@ -1,7 +1,7 @@
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import utils.Setup;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class MainGUI {
@@ -12,8 +12,11 @@ public class MainGUI {
         CompilationUnit[] cUnit = setup.run();
         String[] fileNames = setup.getFileNames();
 
-        System.out.println(Arrays.toString(fileNames));
-
+        for(CompilationUnit cu : cUnit) {
+            for (TypeDeclaration t : cu.getTypes()) {
+                System.out.println(t.getName());
+            }
+        }
     }
 
     private static String getPathFromUser(){

@@ -20,11 +20,13 @@ public class ClassMetrics {
     }
 
     private void extractMetrics(){
-        //TODO
+        extractClassLength();
+        extractNumOfFields();
+        extractMethodsMetrics();
     }
 
     private void extractClassLength(){
-        //TODO
+
     }
 
     private void extractNumOfFields(){
