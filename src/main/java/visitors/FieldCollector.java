@@ -12,6 +12,4 @@ public class FieldCollector extends VoidVisitorAdapter<List<FieldDeclaration>> {
         super.visit(n, arg);
         arg.add(n);
     }
-
-
 }

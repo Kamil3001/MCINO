@@ -20,11 +20,9 @@ public class MainGUI extends JPanel {
     private MainGUI() {
         super(new BorderLayout());
         init();
-
     }
 
-    private void init()
-    {
+    private void init() {
         log = new JTextArea(5,40);
         log.setMargin(new Insets(5,5,5,5));
         log.setEditable(false);
@@ -60,8 +58,7 @@ public class MainGUI extends JPanel {
     }
 
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         launchGUI();
     }
 
@@ -89,14 +86,14 @@ public class MainGUI extends JPanel {
                         log.append("Num public methods: " + classMetricsclass.getNumOfPublicMethods() + newline);
                         log.append(newline);
                     }
+                }
+                else
+                    log.append("Open command cancelled by user." + newline);
 
-            } else {
-                log.append("Open command cancelled by user." + newline);
+                log.setCaretPosition(log.getDocument().getLength());
             }
-            log.setCaretPosition(log.getDocument().getLength());
         }
     }
-}
 
 
 }
