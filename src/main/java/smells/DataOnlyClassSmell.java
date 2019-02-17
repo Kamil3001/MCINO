@@ -3,7 +3,7 @@ package smells;
 // Class stores data only
 public class DataOnlyClassSmell extends AbstractCodeSmell{
     @Override
-    protected String detectSmell() {
+    public String detectSmell() {
         return null;
     }
 

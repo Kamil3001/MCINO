@@ -2,7 +2,7 @@ package smells;
 
 public class HeavyCommentingSmell extends AbstractCodeSmell{
     @Override
-    protected String detectSmell() {
+    public String detectSmell() {
         return null;
     }
 

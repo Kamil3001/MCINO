@@ -1,5 +1,6 @@
 import com.github.javaparser.ast.CompilationUnit;
 import metrics.FileMetrics;
+import smells.SmellDetector;
 import utils.Setup;
 
 import javax.swing.*;

@@ -2,7 +2,7 @@ package smells;
 
 public class RefusedBequestSmell extends AbstractCodeSmell {
     @Override
-    protected String detectSmell() {
+    public String detectSmell() {
         return null;
     }
 

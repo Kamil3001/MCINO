@@ -4,7 +4,7 @@ public abstract class AbstractCodeSmell implements Scorable {
     protected int occurrenceCount;
     protected String[] occurrences;
 
-    protected abstract String detectSmell();
+    public abstract String detectSmell();
 
     public String[] getOccurrences(){
         return occurrences;

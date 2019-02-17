@@ -3,8 +3,8 @@ package smells;
 // long class/methods/ids
 public class BloatedCodeSmell extends AbstractCodeSmell {
     @Override
-    protected String detectSmell() {
-        return null;
+    public String detectSmell() {
+        System.out.println("HIIIII"); return null;
     }
 
     @Override

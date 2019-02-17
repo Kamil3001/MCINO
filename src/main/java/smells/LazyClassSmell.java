@@ -3,7 +3,7 @@ package smells;
 // Class doesn't do enough
 public class LazyClassSmell extends AbstractCodeSmell {
     @Override
-    protected String detectSmell() {
+    public String detectSmell() {
         return null;
     }
 

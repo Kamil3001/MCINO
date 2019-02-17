@@ -2,7 +2,7 @@ package smells;
 
 public class FeatureEnvySmell extends AbstractCodeSmell{
     @Override
-    protected String detectSmell() {
+    public String detectSmell() {
         return null;
     }
 

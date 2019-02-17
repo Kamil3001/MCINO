@@ -8,22 +8,39 @@ public class SmellDetector {
 
     private FileMetrics[] metrics;
     private CompilationUnit[] CUs;
+    private AbstractCodeSmell[] smells;
 
     public SmellDetector(String dirPath){
         Setup setup = new Setup(dirPath);
         CUs = setup.run();
         metrics = new FileMetrics[CUs.length];
-        getMetrics(CUs);
-        detectSmells();
+        getMetrics();
+        instantiateSmells();
     }
 
-    private void getMetrics(CompilationUnit[] CUs){
+    private void instantiateSmells(){
+        smells = new AbstractCodeSmell[9];
+        smells[0] = new BloatedCodeSmell();
+        smells[1] = new CyclomaticComplexitySmell();
+        smells[2] = new DataClumpsSmell();
+        smells[3] = new DataOnlyClassSmell();
+        smells[4] = new DuplicatedCodeSmell();
+        smells[5] = new FeatureEnvySmell();
+        smells[6] = new HeavyCommentingSmell();
+        smells[7] = new LazyClassSmell();
+        smells[8] = new RefusedBequestSmell();
+
+    }
+
+    private void getMetrics(){
         for(int i=0; i<metrics.length; i++){
             metrics[i] = new FileMetrics(CUs[i]);
         }
     }
 
-    private void detectSmells() {
-        //call all smells here passing in the relevant args
+    public void detectSmells() {
+        for(AbstractCodeSmell smell : smells){
+            smell.detectSmell();
+        }
     }
 }
