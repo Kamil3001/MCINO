@@ -1,6 +1,7 @@
 package metrics;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
@@ -15,6 +16,8 @@ import java.util.List;
 public class FileMetrics {
     private CompilationUnit cu;
     private List<String> classNames;
+    private List<ConstructorDeclaration> classConstructors;
+    private List<Integer> classConstructorsLength;
     private List<Integer> classLengths;
     private int numOfFields;
     private int numOfPublicFields;
@@ -26,12 +29,15 @@ public class FileMetrics {
         this.cu = cu;
         methodsMetrics = new HashMap<>();
         classNames = new ArrayList<>();
+        classConstructors = new ArrayList<>();
+        classConstructorsLength = new ArrayList<>();
         classLengths = new ArrayList<>();
         extractMetrics();
     }
 
     private void extractMetrics(){
         extractClassNames();
+        extractClassConstructors();
         extractClassLengths();
         extractNumOfFields();
         extractMethodsMetrics();
@@ -42,9 +48,21 @@ public class FileMetrics {
         classVisitor.visit(cu, classLengths);
     }
 
+    private void extractClassConstructorLengths(int numOfConstructors){
+        classConstructorsLength.add(numOfConstructors);
+    }
+
     private void extractClassNames(){
         for(TypeDeclaration t : cu.getTypes()){
             classNames.add(t.getName().toString());
+            //System.out.println("Class: "+t.getName().toString());
+        }
+    }
+
+    private void extractClassConstructors(){
+        for(TypeDeclaration t : cu.getTypes()) {
+                classConstructors.addAll(t.asClassOrInterfaceDeclaration().getConstructors());
+                extractClassConstructorLengths(t.asClassOrInterfaceDeclaration().getConstructors().size());
         }
     }
 
@@ -55,6 +73,7 @@ public class FileMetrics {
 
         for(FieldDeclaration f : fields){
             numOfFields++;
+
             if(f.isPublic())
                 numOfPublicFields++;
         }
@@ -80,6 +99,10 @@ public class FileMetrics {
         return classLengths;
     }
 
+    public List<Integer> getNumOfClassConstructors(){
+        return classConstructorsLength;
+    }
+
     public int getNumOfFields() {
         return numOfFields;
     }
@@ -98,6 +121,10 @@ public class FileMetrics {
 
     public List<String> getClassNames(){
         return classNames;
+    }
+
+    public List<ConstructorDeclaration> getClassConstructors(){
+        return classConstructors;
     }
 
     public HashMap<String, MethodMetrics> getMethodsMetrics() {

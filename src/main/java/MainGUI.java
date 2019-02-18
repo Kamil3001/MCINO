@@ -49,6 +49,8 @@ public class MainGUI extends JPanel {
         //Create and set up the window.
         JFrame frame = new JFrame("NoseJob");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setMinimumSize(new Dimension(400,600));
+        frame.setMaximumSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 
         //Add content to the window.
         frame.add(new MainGUI());
@@ -80,6 +82,7 @@ public class MainGUI extends JPanel {
                         FileMetrics classMetricsclass = new FileMetrics(cu);
                         log.append("------------------" + newline);
                         log.append("Class name: " + classMetricsclass.getClassNames().toString() + newline);
+                        log.append("Class constructors: "+classMetricsclass.getNumOfClassConstructors() + newline);
                         log.append("Class length: " + classMetricsclass.getClassLengths().toString() + newline);
                         log.append("Num fields: " + classMetricsclass.getNumOfFields() + newline);
                         log.append("Num public fields: " + classMetricsclass.getNumOfPublicFields() + newline);
