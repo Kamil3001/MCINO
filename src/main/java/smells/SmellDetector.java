@@ -40,7 +40,10 @@ public class SmellDetector {
 
     public void detectSmells() {
         for(AbstractCodeSmell smell : smells){
-            smell.detectSmell();
+            for(FileMetrics fm : metrics) {
+                //todo atm jsut calls the method for each smell but should take results and do something with them
+                smell.detectSmell(fm);
+            }
         }
     }
 }

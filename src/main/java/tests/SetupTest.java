@@ -13,13 +13,13 @@ import java.io.File;
 public class SetupTest {
 
     static Setup setup;
-
+//todo
     @BeforeClass
     public static void setup(){
         setup = new Setup(System.getProperty("user.dir"));
     }
 
-
+/*
     @Test
     public void fileTest() {
         assertNotNull(setup.fileAccessor());
@@ -28,7 +28,7 @@ public class SetupTest {
     @Test
     public void hashMapTest() {
         assertNotNull(setup.mapAccessor());
-    }
+    }*/
 
     @AfterClass
     public static void end()
