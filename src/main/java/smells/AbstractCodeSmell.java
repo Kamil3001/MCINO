@@ -2,7 +2,7 @@ package smells;
 
 import metrics.FileMetrics;
 
-public abstract class AbstractCodeSmell implements Scorable {
+public abstract class AbstractCodeSmell{
     protected int occurrenceCount;
     protected String[] occurrences;
 

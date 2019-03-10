@@ -1,14 +1,11 @@
 package metrics;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import visitors.ClassLengthVisitor;
-import visitors.CyclomaticComplexityVisitor;
 import visitors.FieldCollector;
 
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

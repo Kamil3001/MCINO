@@ -23,12 +23,11 @@ public class SmellDetector {
         smells[0] = new BloatedCodeSmell();
         smells[1] = new CyclomaticComplexitySmell();
         smells[2] = new DataClumpsSmell();
-        smells[3] = new DataOnlyClassSmell();
-        smells[4] = new DuplicatedCodeSmell();
-        smells[5] = new FeatureEnvySmell();
-        smells[6] = new HeavyCommentingSmell();
-        smells[7] = new LazyClassSmell();
-        smells[8] = new RefusedBequestSmell();
+        smells[3] = new DuplicatedCodeSmell();
+        smells[4] = new FeatureEnvySmell();
+        smells[5] = new HeavyCommentingSmell();
+        smells[6] = new LazyClassSmell();
+        smells[7] = new RefusedBequestSmell();
 
     }
 

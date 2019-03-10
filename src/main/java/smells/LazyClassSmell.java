@@ -6,12 +6,8 @@ import metrics.FileMetrics;
 public class LazyClassSmell extends AbstractCodeSmell {
 
     @Override
-    public double getScore() {
-        return 0;
-    }
-
-    @Override
     public void detectSmell(FileMetrics metrics) {
 
+        //todo
     }
 }

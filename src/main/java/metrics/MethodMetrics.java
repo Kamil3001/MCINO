@@ -2,7 +2,7 @@ package metrics;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
 
-class MethodMetrics {
+public class MethodMetrics {
     private int numOfParams;
     private int numOfLines;
 
