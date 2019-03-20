@@ -1,14 +1,10 @@
 package tests;
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import utils.Setup;
 
-import java.io.File;
+import static org.junit.Assert.assertNotNull;
 
 public class SetupTest {
 
@@ -22,7 +18,7 @@ public class SetupTest {
 /*
     @Test
     public void fileTest() {
-        assertNotNull(setup.fileAccessor());
+        assertNotNull(setup.filesAccessor());
     }
 
     @Test

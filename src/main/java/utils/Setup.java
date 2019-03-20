@@ -119,6 +119,14 @@ public class Setup {
 
     }
 
+    public File[] filesAccessor(){
+        return this.files;
+    }
+
+    public HashMap mapAccessor(){
+        return this.javaFiles;
+    }
+
     /*public String[] getFileNames()
     {
         String[] fileNames = new String[javaFiles.keySet().size()];

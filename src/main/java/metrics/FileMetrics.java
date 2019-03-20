@@ -1,28 +1,33 @@
 package metrics;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import visitors.ClassLengthVisitor;
 import visitors.FieldCollector;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FileMetrics {
     private CompilationUnit cu;
     private List<String> classNames;
-    private List<String> innerClassNames;
     private List<ConstructorDeclaration> classConstructors;
     private List<Integer> classConstructorsLength;
     private List<Integer> classLengths;
+    private List<Comment> classComments;
     private int numOfFields;
     private int numOfPublicFields;
     private int numOfMethods;
     private int numOfPublicMethods;
     private HashMap<String, MethodMetrics> methodsMetrics;
-
 
     public FileMetrics(CompilationUnit cu){
         this.cu = cu;
@@ -31,6 +36,7 @@ public class FileMetrics {
         classConstructors = new ArrayList<>();
         classConstructorsLength = new ArrayList<>();
         classLengths = new ArrayList<>();
+        classComments = new ArrayList<Comment>();
         extractMetrics();
     }
 
@@ -40,6 +46,7 @@ public class FileMetrics {
         extractClassLengths();
         extractNumOfFields();
         extractMethodsMetrics();
+        extractComments();
     }
 
     private void extractClassLengths(){
@@ -51,7 +58,6 @@ public class FileMetrics {
         classConstructorsLength.add(numOfConstructors);
     }
 
-    //extracts all classes within the file except for inner classes
     private void extractClassNames(){
         for(TypeDeclaration t : cu.getTypes()){
             classNames.add(t.getName().toString());
@@ -93,6 +99,12 @@ public class FileMetrics {
         }
     }
 
+    private void extractComments(){
+
+        classComments.addAll(cu.getComments());
+
+    }
+
 
     /* GETTERS */
     public List<Integer> getClassLengths() {
@@ -122,6 +134,8 @@ public class FileMetrics {
     public List<String> getClassNames(){
         return classNames;
     }
+
+    public List<Comment> getClassComments() { return classComments;}
 
     public List<ConstructorDeclaration> getClassConstructors(){
         return classConstructors;

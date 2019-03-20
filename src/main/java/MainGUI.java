@@ -1,6 +1,5 @@
 import com.github.javaparser.ast.CompilationUnit;
 import metrics.FileMetrics;
-import smells.SmellDetector;
 import utils.Setup;
 
 import javax.swing.*;
@@ -8,6 +7,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class MainGUI extends JPanel {
 
@@ -27,8 +28,20 @@ public class MainGUI extends JPanel {
         log = new JTextArea(5,40);
         log.setMargin(new Insets(5,5,5,5));
         log.setEditable(false);
-        log.append("\t ------ Welcome to MCINO v1.0 ------" +newline);
-        log.append("\t              ~~~~ NOSEJOB ~~~~" +newline);
+        Scanner sc = null;
+        try {
+            sc = new Scanner(new File("src/main/logo.txt"));
+            while(sc.hasNextLine())
+            {
+                System.out.println(sc.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        log.append("\t   Welcome to MCINO v1.0");
+
+
         JScrollPane logScrollPane = new JScrollPane(log);
 
         fc = new JFileChooser();
@@ -88,6 +101,7 @@ public class MainGUI extends JPanel {
                         log.append("Num public fields: " + classMetricsclass.getNumOfPublicFields() + newline);
                         log.append("Num methods: " + classMetricsclass.getNumOfMethods() + newline);
                         log.append("Num public methods: " + classMetricsclass.getNumOfPublicMethods() + newline);
+                        log.append("Num comments: " + classMetricsclass.getClassComments().size()+newline);
                         log.append(newline);
                     }
                 }
