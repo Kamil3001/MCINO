@@ -98,6 +98,4 @@ public class MainGUI extends JPanel {
             }
         }
     }
-
-
 }

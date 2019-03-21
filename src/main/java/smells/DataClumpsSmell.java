@@ -3,10 +3,12 @@ package smells;
 import metrics.FileMetrics;
 import metrics.MethodMetrics;
 
+import java.util.List;
 import java.util.Map;
 
 // Data Clumps are a group of parameters that are passed around together (this is a smell which should be refactored by the programmer)
 public class DataClumpsSmell extends AbstractCodeSmell{
+    private final static String smellName = "Data Clumps";
 
     @Override
     public void detectSmell(FileMetrics metrics) {
@@ -39,5 +41,22 @@ public class DataClumpsSmell extends AbstractCodeSmell{
             //data clumps not a problem
         }
 
+    }
+
+    @Override
+    public String getSmellName() {
+        return smellName;
+    }
+
+    @Override
+    public List<Integer> getOccurrences() {
+        //todo
+        return null;
+    }
+
+    @Override
+    public int getSeverity() {
+        //todo
+        return 0;
     }
 }

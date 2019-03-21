@@ -2,13 +2,17 @@ package smells;
 
 import com.github.javaparser.ast.CompilationUnit;
 import metrics.FileMetrics;
+import results.SmellResult;
 import utils.Setup;
+
+import java.util.ArrayList;
 
 public class SmellDetector {
 
     private FileMetrics[] metrics;
     private CompilationUnit[] CUs;
     private AbstractCodeSmell[] smells;
+    private ArrayList<SmellResult> smellResults;
 
     public SmellDetector(String dirPath){
         Setup setup = new Setup(dirPath);
@@ -38,10 +42,15 @@ public class SmellDetector {
     }
 
     public void detectSmells() {
+        smellResults = new ArrayList<>();
         for(AbstractCodeSmell smell : smells){
+            SmellResult result = new SmellResult(smell.getSmellName());
+
             for(FileMetrics fm : metrics) {
                 //todo atm jsut calls the method for each smell but should take results and do something with them
                 smell.detectSmell(fm);
+                result.addOccurrences(fm.getClassNames().get(0), smell.getOccurrences());
+                result.addSeverity(fm.getClassNames().get(0), smell.getSeverity());
             }
         }
     }

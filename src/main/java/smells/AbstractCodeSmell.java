@@ -1,18 +1,11 @@
 package smells;
 
 import metrics.FileMetrics;
+import results.Resultable;
 
-public abstract class AbstractCodeSmell{
-    protected int occurrenceCount;
-    protected String[] occurrences;
+public abstract class AbstractCodeSmell implements Resultable {
 
     public abstract void detectSmell(FileMetrics metrics);
 
-    public String[] getOccurrences(){
-        return occurrences;
-    }
-
-    public int getCount(){
-        return occurrenceCount;
-    }
+    public abstract String getSmellName();
 }
