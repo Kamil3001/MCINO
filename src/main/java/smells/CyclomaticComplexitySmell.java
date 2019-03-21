@@ -11,8 +11,8 @@ public class CyclomaticComplexitySmell extends AbstractCodeSmell {
     private int cyclomaticComplexity;
 
     @Override
-    public void detectSmell(FileMetrics m) {
-        CyclomaticComplexityVisitor ccv = new CyclomaticComplexityVisitor(m.getCompilationUnit());
+    public void detectSmell(FileMetrics metrics) {
+        CyclomaticComplexityVisitor ccv = new CyclomaticComplexityVisitor(metrics.getCompilationUnit());
         cyclomaticComplexity = ccv.getComplexity();
 
         //if complexity > 20, if > 15 give a warning and otherwise just provide the info

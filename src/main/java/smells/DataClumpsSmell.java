@@ -26,10 +26,10 @@ public class DataClumpsSmell extends AbstractCodeSmell{
 
             avgNumOfParams += numOfParams;
         }
-        avgNumOfParams /= metrics.getNumOfMethods();
+        avgNumOfParams = (metrics.getNumOfMethods() >0) ?  avgNumOfParams/metrics.getNumOfMethods() : 0;
 
         if(avgNumOfParams > 8){
-            //Data clumps are extremly likely to be a problem. Likeliness of methods having 8 parameters on average and not be interdependent is slim
+            //Data clumps are extremely likely to be a problem. Likeliness of methods having 8 parameters on average and not be interdependent is slim
         }
         else if(avgNumOfParams > 5){
             //A high chance data clumps are a problem
