@@ -16,12 +16,11 @@ public class BloatedCodeSmell extends AbstractCodeSmell {
         //max 1000 lines of code per class (excl. method declarations)
         //max 30 methods
 
-
         int avgMethodLength=0;
         for(Map.Entry<String, MethodMetrics> entry : metrics.getMethodsMetrics().entrySet()){
             avgMethodLength += entry.getValue().getNumOfLines(); //extract number of lines from MethodMetrics of the file
         }
-        avgMethodLength /= metrics.getNumOfMethods();
+        avgMethodLength = (metrics.getNumOfMethods() >0) ?  avgMethodLength/metrics.getNumOfMethods() : 0;
 
         if(metrics.getNumOfMethods() > 30){
             if(avgMethodLength > 30 || metrics.getClassLengths().get(0) > 1000){

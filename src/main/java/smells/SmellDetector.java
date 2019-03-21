@@ -23,7 +23,7 @@ public class SmellDetector {
     }
 
     private void instantiateSmells(){
-        smells = new AbstractCodeSmell[9];
+        smells = new AbstractCodeSmell[8];
         smells[0] = new BloatedCodeSmell();
         smells[1] = new CyclomaticComplexitySmell();
         smells[2] = new DataClumpsSmell();
