@@ -10,11 +10,9 @@ import com.github.javaparser.ast.visitor.VoidVisitor;
 import visitors.ClassLengthVisitor;
 import visitors.FieldCollector;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FileMetrics {
     private CompilationUnit cu;
@@ -151,4 +149,4 @@ public class FileMetrics {
 }
 
 
-//TODO Extract private class Listener from MainGUI
+//TODO Extract private class Listener from Collector

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 // Data Clumps are a group of parameters that are passed around together (this is a smell which should be refactored by the programmer)
-public class DataClumpsSmell extends AbstractCodeSmell{
+public class DataClumpsSmell extends AbstractCodeSmell {
     private final static String smellName = "Data Clumps";
 
     @Override

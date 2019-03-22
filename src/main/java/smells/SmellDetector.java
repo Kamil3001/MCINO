@@ -51,7 +51,17 @@ public class SmellDetector {
                 smell.detectSmell(fm);
                 result.addOccurrences(fm.getClassNames().get(0), smell.getOccurrences());
                 result.addSeverity(fm.getClassNames().get(0), smell.getSeverity());
+                smellResults.add(result);
             }
         }
+    }
+
+    public ArrayList<SmellResult> getSmellResults(){
+        return smellResults;
+    }
+
+    public CompilationUnit[] getCUs()
+    {
+        return CUs;
     }
 }
