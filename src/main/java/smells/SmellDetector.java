@@ -60,6 +60,10 @@ public class SmellDetector {
         return smellResults;
     }
 
+    public AbstractCodeSmell[] getSmells(){
+        return smells;
+    }
+
     public CompilationUnit[] getCUs()
     {
         return CUs;
