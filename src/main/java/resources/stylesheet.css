@@ -1,0 +1,59 @@
+.parent{
+    -fx-background-color: #fff;
+}
+
+.sidebar{
+    -fx-background-color: #333645;
+}
+
+.sidebar_btns{
+    -fx-background-color: transparent;
+}
+
+.sidebar_btns:hover{
+    -fx-background-color: #333660;
+}
+
+.sidebar_btns:pressed{
+    -fx-background-color: #200000;
+}
+
+.sidebar_btns:focused{
+    -fx-background-color: #200000;
+    -fx-border-color: #fff;
+    -fx-border-width: 0px 0px 0px 3px;
+}
+
+.app_btns{
+    -fx-background-color:  #4c8bf5;
+    -fx-background-radius: 30;
+}
+
+.app_btns:pressed{
+    -fx-background-color: #043993;
+}
+
+
+.teambox{
+    -fx-border-color: #7C8184;
+    -fx-border-width: 1px 0px 0px 0px;
+}
+
+.combo-box{
+    -fx-background-color: #333645;
+    -fx-mark-color: white;
+    -fx-background-radius: 30;
+    -fx-text-fill: white;
+}
+
+.combo-box>*.list-cell{
+    -fx-text-fill: #7C8184;
+}
+
+.scroll-bar:vertical{
+    -fx-background-color: #333645;
+}
+
+.scroll-bar:vertical .thumb{
+    -fx-background-color: #7C8184;
+}
