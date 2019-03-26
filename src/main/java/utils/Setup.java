@@ -123,7 +123,7 @@ public class Setup {
         return this.files;
     }
 
-    public HashMap mapAccessor(){
+    public HashMap getSourceFiles(){
         return this.javaFiles;
     }
 

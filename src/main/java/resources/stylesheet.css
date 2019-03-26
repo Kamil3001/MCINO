@@ -11,18 +11,17 @@
 }
 
 .sidebar_btns:hover{
-    -fx-background-color: #333660;
-}
+    -fx-border-width: 0px 0px 0px 3px;
+    -fx-border-color: #4c8bf5;
 
-.sidebar_btns:pressed{
-    -fx-background-color: #200000;
 }
 
 .sidebar_btns:focused{
-    -fx-background-color: #200000;
-    -fx-border-color: #fff;
+    -fx-border-color: #4c8bf5;
     -fx-border-width: 0px 0px 0px 3px;
+    -fx-background-color: #000800;
 }
+
 
 .app_btns{
     -fx-background-color:  #4c8bf5;
@@ -54,6 +53,27 @@
     -fx-background-color: #333645;
 }
 
-.scroll-bar:vertical .thumb{
+.scroll-bar:vertical .thumb {
     -fx-background-color: #7C8184;
+}
+
+.scroll-bar:horizontal{
+    -fx-background-color: #333645;
+}
+
+.scroll-bar:horizontal .thumb{
+    -fx-background-color: #7C8184;
+}
+
+.text-area .content{
+    -fx-background-color: #333645;
+}
+
+.text-area{
+    -fx-text-fill: #7C8184;
+    -fx-highlight-fill: #4c8bf5;
+    -fx-highlight-text-fill: white;
+    -fx-border-radius: 10 10 0 0;
+    -fx-background-radius: 10 10 0 0;
+
 }
