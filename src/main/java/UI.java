@@ -14,20 +14,15 @@ import javafx.util.Callback;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
-import org.fxmisc.richtext.model.StyleSpans;
-import org.fxmisc.richtext.model.StyleSpansBuilder;
 import results.SmellResult;
 import smells.SmellDetector;
+import utils.SyntaxHighlighter;
 
 import java.io.File;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Random;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class UI implements Initializable {
 
@@ -62,53 +57,23 @@ public class UI implements Initializable {
     private boolean isNotified = false;
     private String projectDir;
     private SmellDetector smellDetector;
+    private SyntaxHighlighter highlight;
 
     private ObservableList<PieChart.Data> occurrenceData,severityData;
 
-    private static final String[] KEYWORDS = new String[] {
-            "abstract", "assert", "boolean", "break", "byte",
-            "case", "catch", "char", "class", "const",
-            "continue", "default", "do", "double", "else",
-            "enum", "extends", "final", "finally", "float",
-            "for", "goto", "if", "implements", "import",
-            "instanceof", "int", "interface", "long", "native",
-            "new", "package", "private", "protected", "public",
-            "return", "short", "static", "strictfp", "super",
-            "switch", "synchronized", "this", "throw", "throws",
-            "transient", "try", "void", "volatile", "while"
-    };
-
-    private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
-    private static final String PAREN_PATTERN = "\\(|\\)";
-    private static final String BRACE_PATTERN = "\\{|\\}";
-    private static final String BRACKET_PATTERN = "\\[|\\]";
-    private static final String SEMICOLON_PATTERN = "\\;";
-    private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
-    private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
-    private static final String BODY_PATTERN = "\\w";
-    private static final String CHARACTER_PATTERN = "\\S";
-
-
-
-    private static final Pattern PATTERN = Pattern.compile(
-            "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
-                    + "|(?<PAREN>" + PAREN_PATTERN + ")"
-                    + "|(?<BRACE>" + BRACE_PATTERN + ")"
-                    + "|(?<BRACKET>" + BRACKET_PATTERN + ")"
-                    + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")"
-                    + "|(?<STRING>" + STRING_PATTERN + ")"
-                    + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
-                    + "|(?<BODY>" + BODY_PATTERN + ")"
-                    + "|(?<CHARACTER>" + CHARACTER_PATTERN +")"
-    );
-
-
-    private static final String[] defaultColors = {"#f3622d", "#fba71b", "#57b757", "#41a9c9", "#4258c9", "#9a42c8", "#c84164", "#888888"};
-
+    private final String[] defaultColors = {"#f3622d",
+                                                "#fba71b", 
+                                                "#57b757", 
+                                                "#41a9c9", 
+                                                "#4258c9", 
+                                                "#9a42c8", 
+                                                "#c84164", 
+                                                "#888888"};
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        highlight = new SyntaxHighlighter();
         makeStageDraggable();
         openHome();
     }
@@ -160,7 +125,7 @@ public class UI implements Initializable {
                 projectDir = dir.getAbsolutePath();
                 smellDetector = new SmellDetector(projectDir);
                 smellDetector.detectSmells();
-                setupComboBox();
+                initializeComboBox();
 
             }else{
                 reset();
@@ -181,7 +146,7 @@ public class UI implements Initializable {
                 codeSource.richChanges()
                         .filter(ch -> !ch.getInserted().equals(ch.getRemoved()))
                         .subscribe(change -> {
-                            codeSource.setStyleSpans(0, computeHighlighting(codeSource.getText()));
+                            codeSource.setStyleSpans(0, highlight.computeHighlighting(codeSource.getText()));
                         });
                 codeSource.replaceText(0, 0, smellDetector.getSourceFiles().get(comboSource.getSelectionModel().getSelectedItem()));
                 codeSource.setEditable(false);
@@ -198,36 +163,6 @@ public class UI implements Initializable {
         {
             Main.stage.setIconified(true);
         }
-    }
-
-
-
-
-    /** Helper Functions **/
-
-    private StyleSpans<Collection<String>> computeHighlighting(String text) {
-        Matcher matcher = PATTERN.matcher(text);
-        int lastKwEnd = 0;
-        StyleSpansBuilder<Collection<String>> spansBuilder
-                = new StyleSpansBuilder<>();
-        while(matcher.find()) {
-            String styleClass =
-                    matcher.group("KEYWORD") != null ? "keyword" :
-                            matcher.group("PAREN") != null ? "paren" :
-                                    matcher.group("BRACE") != null ? "brace" :
-                                            matcher.group("BRACKET") != null ? "bracket" :
-                                                    matcher.group("SEMICOLON") != null ? "semicolon" :
-                                                            matcher.group("STRING") != null ? "string" :
-                                                                    matcher.group("COMMENT") != null ? "comment" :
-                                                                            matcher.group("BODY") != null ? "body" :
-                                                                                    matcher.group("CHARACTER") != null? "character":
-                                                                                         null; /* never happens */ assert styleClass != null;
-            spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
-            spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
-            lastKwEnd = matcher.end();
-        }
-        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
-        return spansBuilder.create();
     }
 
     private void makeStageDraggable() {
@@ -281,6 +216,11 @@ public class UI implements Initializable {
         }
     }
 
+
+
+    /** Helper Functions **/
+
+
     private File showDirChooser(){
         DirectoryChooser dc = new DirectoryChooser();
         dc.setInitialDirectory(new File(System.getProperty("user.dir")));
@@ -290,25 +230,8 @@ public class UI implements Initializable {
 
     private void createChart() {
 
-        occurrenceData = FXCollections.observableArrayList(
-                new PieChart.Data(smellDetector.getSmells()[0].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[1].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[2].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[3].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[4].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[5].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[6].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[7].getSmellName(), 0));
-
-        severityData = FXCollections.observableArrayList(
-                new PieChart.Data(smellDetector.getSmells()[0].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[1].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[2].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[3].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[4].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[5].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[6].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[7].getSmellName(), 0));
+        occurrenceData = initializeData();
+        severityData = initializeData();
 
         lblMsg.setVisible(false);
         occurrencePieChart.setTitle("Average Occurrence of Smells");
@@ -380,11 +303,14 @@ public class UI implements Initializable {
     }
 
     private void reset() {
+
+        // Clearing pie charts
         occurrencePieChart.getData().clear();
         severityPieChart.getData().clear();
         occurrencePieChart.setVisible(false);
         severityPieChart.setVisible(false);
 
+        // Reset drop down menus
         comboSmell.getItems().clear();
         comboSource.getItems().clear();
         comboSource.setButtonCell(new ListCell<String>() {
@@ -412,11 +338,14 @@ public class UI implements Initializable {
                 }
             }
         });
+
+        // Remove contents of CodeArea
         codePane.getChildren().clear();
 
         lblSource.setText("Source");
         lblSmell.setText("Smell");
 
+        // Reset variables
         projectDir = null;
         isDirChosen = false;
 
@@ -450,7 +379,6 @@ public class UI implements Initializable {
             occurrencePieChart.setVisible(true);
             severityPieChart.setVisible(true);
             if(!isNotified) {
-
                 Alert notification = new Alert(Alert.AlertType.INFORMATION);
                 notification.setHeaderText("Hover cursor over slices to see their values!");
                 notification.setTitle("Hint");
@@ -476,7 +404,6 @@ public class UI implements Initializable {
     }
 
     private void addOccurenceData(String smell, double averageOccurence) {
-
             for(PieChart.Data d: occurrenceData)
             {
                 if(d.getName().equals(smell))
@@ -504,7 +431,7 @@ public class UI implements Initializable {
         severityData.add(new PieChart.Data(smell,averageSeverity));
     }
 
-    private void setupComboBox() {
+    private void initializeComboBox() {
         comboSource.getItems().addAll(smellDetector.getSmellResults().get(0).getSeverityPerFile().keySet());
         comboSmell.getItems().addAll(smellDetector.getSmells()[0].getSmellName(),
                 smellDetector.getSmells()[1].getSmellName(),
@@ -556,26 +483,19 @@ public class UI implements Initializable {
 
         comboSource.setCellFactory(cellFactory);
         comboSmell.setCellFactory(cellFactory);
-
-       /* comboSource.getSelectionModel().selectFirst();
-        comboSmell.getSelectionModel().selectFirst();*/
+    }
+    
+    private ObservableList<PieChart.Data> initializeData() {
+        return FXCollections.observableArrayList(
+                new PieChart.Data(smellDetector.getSmells()[0].getSmellName(), 0),
+                new PieChart.Data(smellDetector.getSmells()[1].getSmellName(), 0),
+                new PieChart.Data(smellDetector.getSmells()[2].getSmellName(), 0),
+                new PieChart.Data(smellDetector.getSmells()[3].getSmellName(), 0),
+                new PieChart.Data(smellDetector.getSmells()[4].getSmellName(), 0),
+                new PieChart.Data(smellDetector.getSmells()[5].getSmellName(), 0),
+                new PieChart.Data(smellDetector.getSmells()[6].getSmellName(), 0),
+                new PieChart.Data(smellDetector.getSmells()[7].getSmellName(), 0));
     }
 
 
 }
-
-/*for(CompilationUnit cu: smellDetector.getCUs()) {
-        FileMetrics classMetricsclass = new FileMetrics(cu);
-        detailsField.appendText("------------------\n");
-        detailsField.appendText("Class name: " + classMetricsclass.getClassNames().toString() + "\n");
-        detailsField.appendText("Class constructors: "+classMetricsclass.getNumOfClassConstructors() + "\n");
-        detailsField.appendText("Class length: " + classMetricsclass.getClassLengths().toString() + "\n");
-        detailsField.appendText("Num fields: " + classMetricsclass.getNumOfFields() + "\n");
-        detailsField.appendText("Num public fields: " + classMetricsclass.getNumOfPublicFields() + "\n");
-        detailsField.appendText("Num methods: " + classMetricsclass.getNumOfMethods() + "\n");
-        detailsField.appendText("Num public methods: " + classMetricsclass.getNumOfPublicMethods() + "\n");
-        detailsField.appendText("Num comments: " + classMetricsclass.getClassComments().size()+"\n");
-        detailsField.appendText("\n");
-        }*/
-
-//TODO Add label to Home i.e. instruction, open project then head to overview/details
