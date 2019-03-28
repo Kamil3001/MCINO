@@ -1,26 +1,17 @@
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.embed.swing.JFXPanel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.stage.*;
+import javafx.stage.DirectoryChooser;
 import javafx.util.Callback;
-import javafx.util.Duration;
-import org.controlsfx.control.Notifications;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -69,14 +60,14 @@ public class UI implements Initializable {
     private SmellDetector smellDetector;
     private SyntaxHighlighter highlight;
 
-    private final String[] defaultColors = {"#f3622d",
-                                                "#fba71b", 
-                                                "#57b757", 
-                                                "#41a9c9", 
-                                                "#4258c9", 
-                                                "#9a42c8", 
-                                                "#c84164", 
-                                                "#888888"};
+    private final String[] defaultColors = {":#f3622d",
+                                                ":#fba71b",
+                                                ":#57b757",
+                                                ":#41a9c9",
+                                                ":#4258c9",
+                                                ":#9a42c8",
+                                                ":#c84164",
+                                                ":#888888"};
 
 
     @Override
@@ -200,7 +191,7 @@ public class UI implements Initializable {
                 pieValue.setVisible(true);
                 pieValue.setText(df.format(d.getPieValue()) +"%");
                 int color = getColor(d.getNode());
-                pieValue.setStyle("-fx-text-fill: " + defaultColors[color]+";");
+                pieValue.setStyle("-fx-text-fill " + defaultColors[color]+";");
             });
 
             d.getNode().setOnMouseExited((event) ->{
@@ -214,7 +205,7 @@ public class UI implements Initializable {
                 pieValue.setVisible(true);
                 pieValue.setText(String.valueOf(df.format(d.getPieValue())));
                 int color = getColor(d.getNode());
-                pieValue.setStyle("-fx-text-fill: " + defaultColors[color]+";");
+                pieValue.setStyle("-fx-text-fill " + defaultColors[color]+";");
             });
 
             d.getNode().setOnMouseExited((event) ->{
@@ -463,7 +454,7 @@ public class UI implements Initializable {
         comboSource.setCellFactory(cellFactory);
         comboSmell.setCellFactory(cellFactory);
     }
-    
+
     private ObservableList<PieChart.Data> initializeData() {
         return FXCollections.observableArrayList(
                 new PieChart.Data(smellDetector.getSmells()[0].getSmellName(), 0),
