@@ -3,6 +3,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
@@ -58,8 +59,6 @@ public class UI implements Initializable {
     private String projectDir;
     private SmellDetector smellDetector;
     private SyntaxHighlighter highlight;
-
-    private ObservableList<PieChart.Data> occurrenceData,severityData;
 
     private final String[] defaultColors = {"#f3622d",
                                                 "#fba71b", 
@@ -145,14 +144,14 @@ public class UI implements Initializable {
                 codeSource.setParagraphGraphicFactory(LineNumberFactory.get(codeSource));
                 codeSource.richChanges()
                         .filter(ch -> !ch.getInserted().equals(ch.getRemoved()))
-                        .subscribe(change -> {
-                            codeSource.setStyleSpans(0, highlight.computeHighlighting(codeSource.getText()));
-                        });
+                        .subscribe(change -> codeSource.setStyleSpans(0, highlight.computeHighlighting(codeSource.getText())));
                 codeSource.replaceText(0, 0, smellDetector.getSourceFiles().get(comboSource.getSelectionModel().getSelectedItem()));
                 codeSource.setEditable(false);
                 codePane.getChildren().add(new VirtualizedScrollPane<>(codeSource));
             }else{
-                error("Please make a selection first.");
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                error.setHeaderText("Please make a selection first.");
+                error.showAndWait();
             }
         }
     }
@@ -191,7 +190,7 @@ public class UI implements Initializable {
             d.getNode().setOnMouseEntered((event) -> {
                 pieValue.setVisible(true);
                 pieValue.setText(df.format(d.getPieValue()) +"%");
-                int color = Integer.parseInt(d.getNode().getStyleClass().get(2).substring(d.getNode().getStyleClass().get(2).length()-1)); // extracts default color index
+                int color = getColor(d.getNode());
                 pieValue.setStyle("-fx-text-fill: " + defaultColors[color]+";");
             });
 
@@ -205,7 +204,7 @@ public class UI implements Initializable {
             d.getNode().setOnMouseEntered((event) -> {
                 pieValue.setVisible(true);
                 pieValue.setText(String.valueOf(df.format(d.getPieValue())));
-                int color = Integer.parseInt(d.getNode().getStyleClass().get(2).substring(d.getNode().getStyleClass().get(2).length()-1)); // extracts default color index
+                int color = getColor(d.getNode());
                 pieValue.setStyle("-fx-text-fill: " + defaultColors[color]+";");
             });
 
@@ -224,14 +223,13 @@ public class UI implements Initializable {
     private File showDirChooser(){
         DirectoryChooser dc = new DirectoryChooser();
         dc.setInitialDirectory(new File(System.getProperty("user.dir")));
-        File selectedDir = dc.showDialog(null);
-        return selectedDir;
+        return dc.showDialog(null); // returns selected directory
     }
 
     private void createChart() {
 
-        occurrenceData = initializeData();
-        severityData = initializeData();
+        ObservableList<PieChart.Data> occurrenceData = initializeData();
+        ObservableList<PieChart.Data> severityData = initializeData();
 
         lblMsg.setVisible(false);
         occurrencePieChart.setTitle("Average Occurrence of Smells");
@@ -246,11 +244,11 @@ public class UI implements Initializable {
             smell = smellDetector.getSmells()[i].getSmellName();
 
             average = extractAverageOccurenceOfSmell(smell);
-            addOccurenceData(smell,average);
+            addData(smell,average, occurrenceData);
             //System.out.println(smell+ " " + average);
 
             average = extractAverageSeverityOfSmell(smell);
-            addSeverityData(smell,average);
+            addData(smell,average, severityData);
             //System.out.println(smell+ " " + average);
         }
         System.out.println();
@@ -313,27 +311,25 @@ public class UI implements Initializable {
         // Reset drop down menus
         comboSmell.getItems().clear();
         comboSource.getItems().clear();
-        comboSource.setButtonCell(new ListCell<String>() {
+        comboSource.setButtonCell(new ListCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty) ;
+                super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText("Select source");
-                }
-                else{
+                } else {
                     setText(item);
                 }
             }
         });
 
-        comboSmell.setButtonCell(new ListCell<String>() {
+        comboSmell.setButtonCell(new ListCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty) ;
+                super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText("Select smell");
-                }
-                else{
+                } else {
                     setText(item);
                 }
             }
@@ -349,12 +345,6 @@ public class UI implements Initializable {
         projectDir = null;
         isDirChosen = false;
 
-    }
-
-    private void error(String err) {
-        Alert error = new Alert(Alert.AlertType.ERROR);
-        error.setHeaderText(err);
-        error.showAndWait();
     }
 
     private void openHome() {
@@ -403,32 +393,18 @@ public class UI implements Initializable {
         lblPage.setText("About");
     }
 
-    private void addOccurenceData(String smell, double averageOccurence) {
-            for(PieChart.Data d: occurrenceData)
+    private void addData(String smell, double average, ObservableList<PieChart.Data> pieData ) {
+            for(PieChart.Data d: pieData)
             {
                 if(d.getName().equals(smell))
                 {
-                    d.setPieValue(averageOccurence);
+                    d.setPieValue(average);
                     return;
                 }
             }
 
             //If smell doesn't exist
-            occurrenceData.add(new PieChart.Data(smell,averageOccurence));
-    }
-
-    private void addSeverityData(String smell, double averageSeverity){
-        for(PieChart.Data data: severityData)
-        {
-            if(data.getName().equals(smell))
-            {
-                data.setPieValue(averageSeverity);
-                return;
-            }
-        }
-
-        //If smell doesn't exist
-        severityData.add(new PieChart.Data(smell,averageSeverity));
+            pieData.add(new PieChart.Data(smell,average));
     }
 
     private void initializeComboBox() {
@@ -442,39 +418,35 @@ public class UI implements Initializable {
                 smellDetector.getSmells()[6].getSmellName(),
                 smellDetector.getSmells()[7].getSmellName());
 
-        Callback<ListView<String>, ListCell<String>> cellFactory = new Callback<ListView<String>, ListCell<String>>() {
+        Callback<ListView<String>, ListCell<String>> cellFactory = new Callback<>() {
             @Override
             public ListCell<String> call(ListView<String> arg0) {
-                ListCell<String> cell = new ListCell<String>() {
+                ListCell<String> cell = new ListCell<>() {
 
                     @Override
                     public void updateItem(String smell, boolean empty) {
                         super.updateItem(smell, empty);
                         if (smell != null) {
                             setText(smell);
-                            setStyle("-fx-background-color: #333645;"+
-                                    "-fx-text-fill: #7c8184;" );
+                            setStyle("-fx-background-color: #333645;" +
+                                    "-fx-text-fill: #7c8184;");
                         }
                     }
 
                 };
 
                 cell.hoverProperty().addListener((observable -> {
-                    if(cell.isHover())
-                    {
-                        cell.setStyle("-fx-background-color: #4c8bf5;"+
+                    if (cell.isHover()) {
+                        cell.setStyle("-fx-background-color: #4c8bf5;" +
                                 "-fx-text-fill: white;");
-                    }else
-                    {
-                        cell.setStyle("-fx-background-color: #333645;"+
+                    } else {
+                        cell.setStyle("-fx-background-color: #333645;" +
                                 "-fx-text-fill: #7c8184;");
                     }
                 }));
 
-                cell.pressedProperty().addListener((observable -> {
-                    cell.setStyle("-fx-background-color: #333645;"+
-                            "-fx-text-fill: #7c8184;");
-                }));
+                cell.pressedProperty().addListener((observable -> cell.setStyle("-fx-background-color: #333645;" +
+                        "-fx-text-fill: #7c8184;")));
 
                 return cell;
             }
@@ -497,5 +469,8 @@ public class UI implements Initializable {
                 new PieChart.Data(smellDetector.getSmells()[7].getSmellName(), 0));
     }
 
+    private int getColor(Node node) {
+        return Integer.parseInt(node.getStyleClass().get(2).substring(node.getStyleClass().get(2).length()-1)); // extracts default color index
+    }
 
 }
