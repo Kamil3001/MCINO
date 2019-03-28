@@ -67,12 +67,12 @@ public class SmellResult {
         return smellName;
     }
 
-    public int getAverageSeverity() {
-        return (int) Math.round((totalSeverity*1.0) / severityPerFile.size());
+    public double getAverageSeverity() {
+        return Math.round((totalSeverity*1.0) / severityPerFile.size());
     }
 
-    public int getAverageOccurrences() {
-        return (int) Math.round((totalOccurrences*1.0) / occurrencesPerFile.size());
+    public double getAverageOccurrences() {
+        return Math.round((totalOccurrences*1.0) / occurrencesPerFile.size());
     }
 
     public HashMap<String, Integer> getSeverityPerFile() {

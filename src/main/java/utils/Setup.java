@@ -24,26 +24,28 @@ public class Setup {
         File directory = new File(this.javaDir);
         this.files = directory.listFiles();
 
-        for (File file : this.files) {
-            if (isJava(file)) {
+        if (this.files != null) {
+            for (File file : this.files) {
+                if (isJava(file)) {
 
-                String javaFileName = file.getName().substring(0, file.getName().indexOf(".")); //removing .java extension from file name
+                    String javaFileName = file.getName().substring(0, file.getName().indexOf(".")); //removing .java extension from file name
 
-                try{
-                    Scanner sc = new Scanner(file);
-                    StringBuilder code = new StringBuilder();
-                    while(sc.hasNextLine())
-                    {
-                       code.append(sc.nextLine()).append("\n");
+                    try{
+                        Scanner sc = new Scanner(file);
+                        StringBuilder code = new StringBuilder();
+                        while(sc.hasNextLine())
+                        {
+                           code.append(sc.nextLine()).append("\n");
+                        }
+                        sc.close();
+
+                        this.javaFiles.put(javaFileName,code.toString());
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
                     }
-                    sc.close();
 
-                    this.javaFiles.put(javaFileName,code.toString());
-
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
                 }
-
             }
         }
     }
@@ -69,14 +71,12 @@ public class Setup {
 
         int i = 0;
 
-        if(fileList.length > 0) {
+        if (fileList != null && fileList.length > 0) {
             while (i < fileList.length && !found) {
                 if (fileList[i].isDirectory()) {
                     found = getDirectory(fileList[i].getAbsolutePath());
-                }
-                else if(isJava(fileList[i]))
-                {
-                    this.javaDir = fileList[i].getAbsolutePath().substring(0,fileList[i].getAbsolutePath().indexOf(fileList[i].getName()));
+                } else if (isJava(fileList[i])) {
+                    this.javaDir = fileList[i].getAbsolutePath().substring(0, fileList[i].getAbsolutePath().indexOf(fileList[i].getName()));
                     found = true;
                 }
                 i++;
@@ -106,7 +106,6 @@ public class Setup {
     public CompilationUnit[] run(){
         CompilationUnit[] cUnit = new CompilationUnit[javaFiles.keySet().size()];
         int index = 0;
-
         System.out.println(javaFiles.keySet());
 
         for(Map.Entry<String, String> code: javaFiles.entrySet())
@@ -123,7 +122,7 @@ public class Setup {
         return this.files;
     }
 
-    public HashMap getSourceFiles(){
+    public HashMap<String, String> getSourceFiles(){
         return this.javaFiles;
     }
 

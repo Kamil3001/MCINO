@@ -1,19 +1,32 @@
 package smells;
 
+import com.github.javaparser.Position;
 import metrics.FileMetrics;
 import metrics.MethodMetrics;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Optional;
 
 // Data Clumps are a group of parameters that are passed around together (this is a smell which should be refactored by the programmer)
 public class DataClumpsSmell extends AbstractCodeSmell {
     private final static String smellName = "Data Clumps";
+    private static String[] resultComments = {
+            "",
+            "",
+            "",
+            ""
+    };
+
+    DataClumpsSmell(){
+        severity = 0;
+        occurrences = new ArrayList<>();
+    }
 
     @Override
     public void detectSmell(FileMetrics metrics) {
 
-        //todo this is a hard smell to detect accurately because of the potential variety in parameters passed in
+        //this is a hard smell to detect accurately because of the potential variety in parameters passed in
         //Workaround: Assume that high number of parameters to a method is a sign data clumps are possible
         //  Thus if average number of parameters is high, they can likely be grouped into objects
 
@@ -24,22 +37,30 @@ public class DataClumpsSmell extends AbstractCodeSmell {
             if(numOfParams > maxNumOfParams)
                 maxNumOfParams = numOfParams;
 
+            if(numOfParams > 4){
+                Optional<Position> methodStart = entry.getValue().getMethodDeclaration().getName().getBegin(); //method start excl annotations
+                methodStart.ifPresent(position -> occurrences.add(position.line)); //functional style for adding beginning to occurrences if present
+            }
+
             avgNumOfParams += numOfParams;
         }
-        avgNumOfParams = (metrics.getNumOfMethods() >0) ?  avgNumOfParams/metrics.getNumOfMethods() : 0;
 
-        if(avgNumOfParams > 8){
+        avgNumOfParams = (metrics.getNumOfMethods() > 0) ?  avgNumOfParams/metrics.getNumOfMethods() : 0;
+
+        if(avgNumOfParams > 8 || maxNumOfParams > 12){
             //Data clumps are extremely likely to be a problem. Likeliness of methods having 8 parameters on average and not be interdependent is slim
+            severity = 3;
         }
-        else if(avgNumOfParams > 5){
+        else if(avgNumOfParams > 6 || maxNumOfParams > 10){
             //A high chance data clumps are a problem
+            severity = 2;
         }
-        else if(maxNumOfParams > 8){
+        else if(avgNumOfParams > 4 || maxNumOfParams > 8){
             //data clumps are not a problem throughout the entire file given small average but select methods may smell of data clumps
+            severity = 1;
         }
-        else{
-            //data clumps not a problem
-        }
+        else
+            severity = 0;
 
     }
 
@@ -49,14 +70,7 @@ public class DataClumpsSmell extends AbstractCodeSmell {
     }
 
     @Override
-    public List<Integer> getOccurrences() {
-        //todo
-        return null;
-    }
-
-    @Override
-    public int getSeverity() {
-        //todo
-        return 0;
+    public String getResultComment() {
+        return resultComments[severity];
     }
 }

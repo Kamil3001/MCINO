@@ -8,6 +8,12 @@ import java.util.List;
 // Class doesn't do enough
 public class LazyClassSmell extends AbstractCodeSmell {
     private final static String smellName = "Lazy Class";
+    private static String[] resultComments = {
+            "",
+            "",
+            "",
+            ""
+    };
 
     @Override
     public void detectSmell(FileMetrics metrics) {
@@ -21,12 +27,7 @@ public class LazyClassSmell extends AbstractCodeSmell {
     }
 
     @Override
-    public List<Integer> getOccurrences() {
-        return null;
-    }
-
-    @Override
-    public int getSeverity() {
-        return 0;
+    public String getResultComment() {
+        return resultComments[severity];
     }
 }

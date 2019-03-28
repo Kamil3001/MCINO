@@ -7,6 +7,12 @@ import java.util.List;
 
 public class DuplicatedCodeSmell extends AbstractCodeSmell {
     private final static String smellName = "Duplicated Code";
+    private static String[] resultComments = {
+            "",
+            "",
+            "",
+            ""
+    };
 
     @Override
     public void detectSmell(FileMetrics metrics) {
@@ -19,14 +25,7 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
     }
 
     @Override
-    public List<Integer> getOccurrences() {
-        //todo
-        return null;
-    }
-
-    @Override
-    public int getSeverity() {
-        //todo
-        return 0;
+    public String getResultComment() {
+        return resultComments[severity];
     }
 }

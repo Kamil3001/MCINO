@@ -50,7 +50,6 @@ public class SmellDetector {
             SmellResult result = new SmellResult(smell.getSmellName());
 
             for(FileMetrics fm : metrics) {
-                //todo atm jsut calls the method for each smell but should take results and do something with them
                 smell.detectSmell(fm);
                 result.addOccurrences(fm.getClassNames().get(0), smell.getOccurrences());
                 result.addSeverity(fm.getClassNames().get(0), smell.getSeverity());

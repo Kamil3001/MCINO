@@ -9,14 +9,26 @@ import java.util.List;
 //count num of ifs, else ifs, switch cases and loops
 public class CyclomaticComplexitySmell extends AbstractCodeSmell {
     private final static String smellName = "Cyclomatic Complexity";
-    private int cyclomaticComplexity;
+    private static String[] resultComments = {
+            "",
+            "",
+            "",
+            ""
+    };
 
     @Override
     public void detectSmell(FileMetrics metrics) {
         CyclomaticComplexityVisitor ccv = new CyclomaticComplexityVisitor(metrics.getCompilationUnit());
-        cyclomaticComplexity = ccv.getComplexity();
+        int cyclomaticComplexity = ccv.getComplexity();
 
-        //if complexity > 20, if > 15 give a warning and otherwise just provide the info
+        if(cyclomaticComplexity > 20) //high
+            severity = 3;
+        else if(cyclomaticComplexity > 15) //medium
+            severity = 2;
+        else if(cyclomaticComplexity > 10) //low
+            severity = 1;
+        else
+            severity = 0;
     }
 
     @Override
@@ -25,14 +37,7 @@ public class CyclomaticComplexitySmell extends AbstractCodeSmell {
     }
 
     @Override
-    public List<Integer> getOccurrences() {
-        //todo
+    public String getResultComment() {
         return null;
-    }
-
-    @Override
-    public int getSeverity() {
-        //todo
-        return 0;
     }
 }

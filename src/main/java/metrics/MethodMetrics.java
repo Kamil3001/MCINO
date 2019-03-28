@@ -8,16 +8,17 @@ public class MethodMetrics {
     private int numOfParams;
     private int numOfLines;
     private int modifiers;
-    private BlockStmt body;
+    private MethodDeclaration md;
 
     MethodMetrics(MethodDeclaration md){
+        this.md = md;
         computeMetrics(md);
     }
 
     //Extracting number of lines and parameters of the method from MethodDeclaration
     private void computeMetrics(MethodDeclaration md){
         if(md.getBody().isPresent()){
-            body = md.getBody().get();
+            BlockStmt body = md.getBody().get();
             numOfLines = body.toString().length() - body.toString().replace("\n", "").length();
 
         }
@@ -41,7 +42,5 @@ public class MethodMetrics {
         return modifiers;
     }
 
-    public BlockStmt getBody() {
-        return body;
-    }
+    public MethodDeclaration getMethodDeclaration() { return md; }
 }
