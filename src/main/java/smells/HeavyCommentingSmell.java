@@ -3,8 +3,6 @@ package smells;
 
 import metrics.FileMetrics;
 
-import java.util.List;
-
 //Too many comments make the code hard to read, better practice to have code that is self explanatory where possible
 public class HeavyCommentingSmell extends AbstractCodeSmell{
     private final static String smellName = "Heavy Commenting";

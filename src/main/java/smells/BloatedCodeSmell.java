@@ -3,7 +3,6 @@ package smells;
 import metrics.FileMetrics;
 import metrics.MethodMetrics;
 
-import java.util.List;
 import java.util.Map;
 
 // long class/methods/ids (use in tandem with cyclomatic complexity to get a more accurate view of the files)
