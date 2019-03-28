@@ -203,7 +203,7 @@ public class UI implements Initializable {
         for (PieChart.Data d : severityPieChart.getData()) {
             d.getNode().setOnMouseEntered((event) -> {
                 pieValue.setVisible(true);
-                pieValue.setText(String.valueOf(df.format(d.getPieValue())));
+                pieValue.setText(String.valueOf(df.format(d.getPieValue() - 1)));
                 int color = getColor(d.getNode());
                 pieValue.setStyle("-fx-text-fill " + defaultColors[color]+";");
             });
@@ -246,7 +246,7 @@ public class UI implements Initializable {
             //System.out.println(smell+ " " + average);
 
             average = extractAverageSeverityOfSmell(smell);
-            addData(smell,average, severityData);
+            addData(smell,average+1, severityData);
             //System.out.println(smell+ " " + average);
         }
         System.out.println();
@@ -260,18 +260,14 @@ public class UI implements Initializable {
 
     // Gets total average severity of a specific smell across all source files
     private double extractAverageSeverityOfSmell(String smellName){
-        double totalAverage = 0.0;
-        int count = 0;
         for(SmellResult sr: smellDetector.getSmellResults())
         {
             if(sr.getSmellName().equalsIgnoreCase(smellName))
             {
-                totalAverage = totalAverage + sr.getAverageSeverity();
-                count++;
+                return sr.getAverageSeverity();
             }
         }
-        Random rand = new Random();
-        return (totalAverage/count+rand.nextDouble())/4 * 8;
+        return 0;
     }
 
     // Gets total average occurrence of a specific smell across all source files
