@@ -9,10 +9,10 @@ import java.util.Map;
 public class BloatedCodeSmell extends AbstractCodeSmell {
     private final static String smellName = "Bloated Code";
     private static String[] resultComments = {
-            "",
-            "",
-            "",
-            ""
+            "Code not bloated. Nothing to be concerned about here. ",
+            "Code showing signs of bloating. A little concerning. ",
+            "Code has a substantial amount of bloating. Very concerning, should fix as soon as possible. ",
+            "Code completely bloated (may see a doctor). Area red, must be fixed immediately!"
     };
 
     @Override
