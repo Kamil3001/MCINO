@@ -7,10 +7,10 @@ import metrics.FileMetrics;
 public class HeavyCommentingSmell extends AbstractCodeSmell{
     private final static String smellName = "Heavy Commenting";
     private static String[] resultComments = {
-            "",
-            "",
-            "",
-            ""
+            "No heavy commenting here. All clear",
+            "Traces of heavy commenting,relax.",
+            "A bit too much commenting going on. Investigate.",
+            "Comments everywhere ,unnecessary, fix immediately."
     };
 
     public HeavyCommentingSmell(){

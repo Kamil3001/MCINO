@@ -9,10 +9,10 @@ import java.util.List;
 public class LazyClassSmell extends AbstractCodeSmell {
     private final static String smellName = "Lazy Class";
     private static String[] resultComments = {
-            "",
-            "",
-            "",
-            ""
+            "No signs of being a lazy class. All good.",
+            "Signs of being a lazy class. Check code carefully.",
+            "The problem is getting worse.",
+            "Your class is lazy. Area Red, must be fixed!"
     };
 
     @Override
