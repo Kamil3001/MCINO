@@ -1,12 +1,10 @@
 package metrics;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.ConstructorDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.visitor.VoidVisitor;
+
 import visitors.ClassLengthVisitor;
 import visitors.FieldCollector;
 
@@ -17,8 +15,8 @@ import java.util.List;
 public class FileMetrics {
     private CompilationUnit cu;
     private List<String> classNames;
+    private List<ClassOrInterfaceDeclaration> subClasses;
     private List<ConstructorDeclaration> classConstructors;
-    private List<Integer> classConstructorsLength;
     private List<Integer> classLengths;
     private List<Comment> classComments;
     private int numOfFields;
@@ -26,21 +24,22 @@ public class FileMetrics {
     private int numOfMethods;
     private int numOfPublicMethods;
     private HashMap<String, MethodMetrics> methodsMetrics;
+    private HashMap<String, List<MethodDeclaration>> subClassMethods;
 
     public FileMetrics(CompilationUnit cu){
         this.cu = cu;
         methodsMetrics = new HashMap<>();
+        subClassMethods = new HashMap<>();
         classNames = new ArrayList<>();
+        subClasses = new ArrayList<>();
         classConstructors = new ArrayList<>();
-        classConstructorsLength = new ArrayList<>();
         classLengths = new ArrayList<>();
-        classComments = new ArrayList<Comment>();
+        classComments = new ArrayList<>();
         extractMetrics();
     }
 
     private void extractMetrics(){
         extractClassNames();
-        extractClassConstructors();
         extractClassLengths();
         extractNumOfFields();
         extractMethodsMetrics();
@@ -52,23 +51,20 @@ public class FileMetrics {
         classVisitor.visit(cu, classLengths);
     }
 
-    private void extractClassConstructorLengths(int numOfConstructors){
-        classConstructorsLength.add(numOfConstructors);
-    }
-
     private void extractClassNames(){
         for(TypeDeclaration t : cu.getTypes()){
-            classNames.add(t.getName().toString());
-            //System.out.println("Class: "+t.getName().toString());
+            if(t.isClassOrInterfaceDeclaration()) {
+                classNames.add(t.getName().toString());
+                // Find Inner Classes
+                for (int i = 0; i < t.getMembers().size(); i++) {
+                    BodyDeclaration body = t.getMember(i);
+                    // below line will add subclasses to className but code needs to be altered to work with it
+                    if (body.isClassOrInterfaceDeclaration())  subClasses.add(body.asClassOrInterfaceDeclaration());
+                }
+            }
         }
     }
 
-    private void extractClassConstructors(){
-        for(TypeDeclaration t : cu.getTypes()) {
-                classConstructors.addAll(t.asClassOrInterfaceDeclaration().getConstructors());
-                extractClassConstructorLengths(t.asClassOrInterfaceDeclaration().getConstructors().size());
-        }
-    }
 
     private void extractNumOfFields(){
         List<FieldDeclaration> fields = new ArrayList<>();
@@ -83,16 +79,33 @@ public class FileMetrics {
         }
     }
 
+    /* This method sorts through the files members sorting them into
+    * Types: ClassOrInterfaceDeclaration, MethodDeclaration & ConstructorDeclaration
+    * and adds them to their respective List or HashMap  */
     private void extractMethodsMetrics(){
-        for(TypeDeclaration td : cu.getTypes()){
-            List<MethodDeclaration> mds = td.getMethods();
-            for(MethodDeclaration md : mds){
-                numOfMethods++;
-                if(md.isPublic())
-                    numOfPublicMethods++;
+        for (TypeDeclaration td : cu.getTypes()) {
+            List list = td.getMembers();
+            for (int i = 0; i < list.size(); i++) {
 
-                String methodName = md.getName().toString();
-                methodsMetrics.put(methodName, new MethodMetrics(md));
+                if (list.get(i) instanceof ClassOrInterfaceDeclaration) {
+                    ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) list.get(i);
+                    subClassMethods.put(clazz.getName().asString(), clazz.getMethods());
+                }
+
+                else if(list.get(i) instanceof MethodDeclaration){
+                    MethodDeclaration md = (MethodDeclaration) list.get(i);
+                    numOfMethods++;
+                    if (md.isPublic())
+                        numOfPublicMethods++;
+
+                    String methodName = md.getName().toString();
+                    methodsMetrics.put(methodName, new MethodMetrics(md));
+                }
+
+                else if(list.get(i) instanceof ConstructorDeclaration){
+                    ConstructorDeclaration cd = (ConstructorDeclaration) list.get(i);
+                    classConstructors.add(cd);
+                }
             }
         }
     }
@@ -107,10 +120,6 @@ public class FileMetrics {
     /* GETTERS */
     public List<Integer> getClassLengths() {
         return classLengths;
-    }
-
-    public List<Integer> getNumOfClassConstructors(){
-        return classConstructorsLength;
     }
 
     public int getNumOfFields() {
@@ -133,10 +142,8 @@ public class FileMetrics {
         return classNames;
     }
 
-    public List<Comment> getClassComments() { return classComments;}
-
-    public List<ConstructorDeclaration> getClassConstructors(){
-        return classConstructors;
+    public List<Comment> getClassComments() {
+        return classComments;
     }
 
     public HashMap<String, MethodMetrics> getMethodsMetrics() {
@@ -146,6 +153,18 @@ public class FileMetrics {
     public CompilationUnit getCompilationUnit() {
         return cu;
     }
+    public List<ClassOrInterfaceDeclaration> getSubClasses() {
+        return subClasses;
+    }
+
+    public List<ConstructorDeclaration> getClassConstructors() {
+        return classConstructors;
+    }
+
+    public HashMap<String, List<MethodDeclaration>> getSubClassMethods() {
+        return subClassMethods;
+    }
+
 }
 
 

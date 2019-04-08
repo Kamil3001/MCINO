@@ -305,7 +305,7 @@ public class UI implements Initializable {
         // Reset drop down menus
         comboSmell.getItems().clear();
         comboSource.getItems().clear();
-        comboSource.setButtonCell(new ListCell<>() {
+        comboSource.setButtonCell(new ListCell<String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -317,7 +317,7 @@ public class UI implements Initializable {
             }
         });
 
-        comboSmell.setButtonCell(new ListCell<>() {
+        comboSmell.setButtonCell(new ListCell<String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -412,10 +412,10 @@ public class UI implements Initializable {
                 smellDetector.getSmells()[6].getSmellName(),
                 smellDetector.getSmells()[7].getSmellName());
 
-        Callback<ListView<String>, ListCell<String>> cellFactory = new Callback<>() {
+        Callback<ListView<String>, ListCell<String>> cellFactory = new Callback<ListView<String>, ListCell<String>>() {
             @Override
             public ListCell<String> call(ListView<String> arg0) {
-                ListCell<String> cell = new ListCell<>() {
+                ListCell<String> cell = new ListCell<String>() {
 
                     @Override
                     public void updateItem(String smell, boolean empty) {

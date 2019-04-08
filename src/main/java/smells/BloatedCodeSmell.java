@@ -70,7 +70,7 @@ public class BloatedCodeSmell extends AbstractCodeSmell {
                 severity = 0;
             }
         }
-        else{
+        else if(!metrics.getClassLengths().isEmpty()){
             if(avgMethodLength > 60 || metrics.getClassLengths().get(0) > 1450){
                 severity = 3;
             }
