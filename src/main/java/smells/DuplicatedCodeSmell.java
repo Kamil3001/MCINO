@@ -15,7 +15,7 @@ import utils.RabinKarp;
 
 public class DuplicatedCodeSmell extends AbstractCodeSmell {
 
-    private static int NO_BLOCKS_TO_CHECK = 2;
+    private static int NO_BLOCKS_TO_CHECK = 3;
     private final static String smellName = "Duplicated Code";
     private static String[] resultComments = {
             "No duplicated code here. Run along.",
