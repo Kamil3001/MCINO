@@ -18,10 +18,10 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
     private static int NO_BLOCKS_TO_CHECK = 2;
     private final static String smellName = "Duplicated Code";
     private static String[] resultComments = {
-            "",
-            "",
-            "",
-            ""
+            "No duplicated code here. Run along.",
+            "Showing signs of duplicated code. Investigate.",
+            "Code heavily duplicated. Fix as soon as possible.",
+            "Duplicated code everywhere. Solve immediately."
     };
     private String file;
     private List<String> methodNames;

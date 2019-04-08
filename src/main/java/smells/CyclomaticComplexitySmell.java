@@ -10,10 +10,10 @@ import java.util.List;
 public class CyclomaticComplexitySmell extends AbstractCodeSmell {
     private final static String smellName = "Cyclomatic Complexity";
     private static String[] resultComments = {
-            "",
-            "",
-            "",
-            ""
+            "This file has a low Cyclomatic complexity. All clear. ",
+            "Complexity is increasing. Keep a close eye here.",
+            "High complexity. Should look into fixing this issue.",
+            "High Cyclomatic Complexity right here. This is an emergency, fix immediately."
     };
 
     @Override
