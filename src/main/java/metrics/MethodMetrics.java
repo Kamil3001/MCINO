@@ -1,14 +1,18 @@
 package metrics;
 
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.Statement;
 
 
 public class MethodMetrics {
     private int numOfParams;
     private int numOfLines;
     private int modifiers;
+    private Integer startLine;
     private MethodDeclaration md;
+    private BlockStmt body;
 
     MethodMetrics(MethodDeclaration md){
         this.md = md;
@@ -18,7 +22,8 @@ public class MethodMetrics {
     //Extracting number of lines and parameters of the method from MethodDeclaration
     private void computeMetrics(MethodDeclaration md){
         if(md.getBody().isPresent()){
-            BlockStmt body = md.getBody().get();
+            startLine = md.getBegin().isPresent() ?  md.getBegin().get().line : -1;
+            body = md.getBody().get();
             numOfLines = body.toString().length() - body.toString().replace("\n", "").length();
 
         }
@@ -34,6 +39,18 @@ public class MethodMetrics {
         return numOfLines;
     }
 
+    public BlockStmt getBody() {
+        return body;
+    }
+
+    public NodeList<Statement> getStatements(){
+        return md.getBody().isPresent() ? md.getBody().get().getStatements() : null;
+    }
+
+    public int getNumOfStatements() {
+        return md.getBody().isPresent() ? md.getBody().get().getStatements().size() : 0;
+    }
+
     public int getNumOfParams() {
         return numOfParams;
     }
@@ -42,5 +59,15 @@ public class MethodMetrics {
         return modifiers;
     }
 
-    public MethodDeclaration getMethodDeclaration() { return md; }
+    public int getStartLine(){
+        return startLine;
+    }
+    public MethodDeclaration getMethodDeclaration() {
+        return md;
+    }
+
+    @Override
+    public String toString() {
+        return body.toString();
+    }
 }
