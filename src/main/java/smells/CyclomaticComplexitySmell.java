@@ -9,12 +9,6 @@ import java.util.List;
 //count num of ifs, else ifs, switch cases and loops
 public class CyclomaticComplexitySmell extends AbstractCodeSmell {
     private final static String smellName = "Cyclomatic Complexity";
-    private static String[] resultComments = {
-            "This file has a low Cyclomatic complexity. All clear. ",
-            "Complexity is increasing. Keep a close eye here.",
-            "High complexity. Should look into fixing this issue.",
-            "High Cyclomatic Complexity right here. This is an emergency, fix immediately."
-    };
 
     @Override
     public void detectSmell(FileMetrics metrics) {
@@ -34,10 +28,5 @@ public class CyclomaticComplexitySmell extends AbstractCodeSmell {
     @Override
     public String getSmellName() {
         return smellName;
-    }
-
-    @Override
-    public String getResultComment() {
-        return null;
     }
 }

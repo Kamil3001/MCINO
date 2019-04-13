@@ -6,13 +6,6 @@ import metrics.FileMetrics;
 //Too many comments make the code hard to read, better practice to have code that is self explanatory where possible
 public class HeavyCommentingSmell extends AbstractCodeSmell{
     private final static String smellName = "Heavy Commenting";
-    private static String[] resultComments = {
-            "No heavy commenting here. All clear",
-            "Traces of heavy commenting,relax.",
-            "A bit too much commenting going on. Investigate.",
-            "Comments everywhere ,unnecessary, fix immediately."
-    };
-
     public HeavyCommentingSmell(){
         severity = 0;
     }
@@ -45,10 +38,5 @@ public class HeavyCommentingSmell extends AbstractCodeSmell{
     @Override
     public String getSmellName() {
         return smellName;
-    }
-
-    @Override
-    public String getResultComment(){
-        return resultComments[severity];
     }
 }

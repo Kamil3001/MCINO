@@ -17,12 +17,6 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
 
     private static int NO_BLOCKS_TO_CHECK = 3;
     private final static String smellName = "Duplicated Code";
-    private static String[] resultComments = {
-            "No duplicated code here. Run along.",
-            "Showing signs of duplicated code. Investigate.",
-            "Code heavily duplicated. Fix as soon as possible.",
-            "Duplicated code everywhere. Solve immediately."
-    };
     private String file;
     private List<String> methodNames;
     private HashMap methods;
@@ -249,12 +243,6 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
         return instances;
     }
     public Map getDuplicates(){ return duplicateLines; }
-
-    @Override
-    public String getResultComment() {
-        return resultComments[severity];
-    }
-
 
     /* DUPLICATE CODE EXAMPLE - Uncomment for match with combineStatements() */
 //    private String aMethod(BlockStmt block, int index, boolean indexIsStart){

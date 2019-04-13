@@ -11,12 +11,6 @@ import java.util.Optional;
 // Data Clumps are a group of parameters that are passed around together (this is a smell which should be refactored by the programmer)
 public class DataClumpsSmell extends AbstractCodeSmell {
     private final static String smellName = "Data Clumps";
-    private static String[] resultComments = {
-            "No data clumps here. Carry on.",
-            "Showing signs of data clumping, maybe try to optimize the code.",
-            "Substantial amount of data clumping. Investigate how to solve this problem",
-            "Data clumping left,right & centre. Area red, fix immediately."
-    };
 
     DataClumpsSmell(){
         severity = 0;
@@ -67,10 +61,5 @@ public class DataClumpsSmell extends AbstractCodeSmell {
     @Override
     public String getSmellName() {
         return smellName;
-    }
-
-    @Override
-    public String getResultComment() {
-        return resultComments[severity];
     }
 }
