@@ -13,7 +13,6 @@ public class DataClumpsSmell extends AbstractCodeSmell {
     private final static String smellName = "Data Clumps";
 
     DataClumpsSmell(){
-        severity = 0;
         occurrences = new ArrayList<>();
     }
 
@@ -53,9 +52,6 @@ public class DataClumpsSmell extends AbstractCodeSmell {
             //data clumps are not a problem throughout the entire file given small average but select methods may smell of data clumps
             severity = 1;
         }
-        else
-            severity = 0;
-
     }
 
     @Override

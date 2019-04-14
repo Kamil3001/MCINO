@@ -95,8 +95,8 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
                         if (result > -1) { // if duplicate found
                             // ensure not false equivalence due to same hashCode
                             if(getSimilarityPercentage(pattern, text.substring(result, result + pattern.length()))==100.0) {
-                                Occurrence first = new Occurrence(getSmellName(), file, currentMethod, methodStartLine);
-                                Occurrence second = new Occurrence(getSmellName(), file, currentMethod, offset);
+                                Occurrence first = new Occurrence(getSmellName(), file, currentMethod, methodStartLine, methodStartLine); //todo change to range values
+                                Occurrence second = new Occurrence(getSmellName(), file, currentMethod, offset, offset); //todo change to range values
                                 duplicateLines.put(first, second); // put instance of duplication in HashMap
                                 instances++;
                             }
@@ -125,8 +125,8 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
                 result = rk.search(text);
                 if (result > -1) {
                     if (getSimilarityPercentage(pattern, text.substring(result, result + pattern.length())) == 100.0) {
-                        Occurrence first = new Occurrence(getSmellName(), file, currentMethod, methodStartLine);
-                        Occurrence second = new Occurrence(getSmellName(), file, methodMetrics.getMethodDeclaration().getNameAsString(), lineNumberOfChar(result, aBody));
+                        Occurrence first = new Occurrence(getSmellName(), file, currentMethod, methodStartLine , methodStartLine); //todo change to range values
+                        Occurrence second = new Occurrence(getSmellName(), file, methodMetrics.getMethodDeclaration().getNameAsString(), lineNumberOfChar(result, aBody), lineNumberOfChar(result, aBody)); //todo change to range values
                         duplicateLines.put(first, second);
                         instances++;
                     }
@@ -233,7 +233,7 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
     public List<Integer> getOccurrences() {
         List<Integer> list = new ArrayList<>();
         for (Occurrence occ : duplicateLines.keySet()) {
-            list.add(occ.getLineNumber());
+            list.add(occ.getRange().getStart()); //todo change this to what you need, im guessing start line is what you're looking for but i wasn't sure
         }
         return list;
     }

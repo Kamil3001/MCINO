@@ -4,12 +4,13 @@ public class Occurrence {
     private final String smellName;
     private String className;
     private String methodName;
-    private int lineNumber;
-    public Occurrence(String smellName, String className, String methodName, int lineNumber){
+    private Range occurenceRange;
+
+    public Occurrence(String smellName, String className, String methodName, int startLine, int endLine){
         this.smellName = smellName;
         this.className = className;
         this.methodName = methodName;
-        this.lineNumber = lineNumber;
+        occurenceRange = new Range(startLine, endLine);
     }
 
     public String getSmellName() {
@@ -20,8 +21,8 @@ public class Occurrence {
         return className;
     }
 
-    public int getLineNumber() {
-        return lineNumber;
+    public Range getRange() {
+        return occurenceRange;
     }
 
     public String getMethodName(){ return methodName;}

@@ -94,6 +94,7 @@ public class FileMetrics {
 
                 else if(list.get(i) instanceof MethodDeclaration){
                     MethodDeclaration md = (MethodDeclaration) list.get(i);
+                    System.out.println(md.getName().toString());
                     numOfMethods++;
                     if (md.isPublic())
                         numOfPublicMethods++;
@@ -147,7 +148,7 @@ public class FileMetrics {
     }
 
     public HashMap<String, MethodMetrics> getMethodsMetrics() {
-        return methodsMetrics;
+        return (HashMap<String, MethodMetrics>) methodsMetrics.clone();
     }
 
     public CompilationUnit getCompilationUnit() {
