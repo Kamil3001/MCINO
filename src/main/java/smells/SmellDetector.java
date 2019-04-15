@@ -33,7 +33,7 @@ public class SmellDetector {
         smells[3] = new DuplicatedCodeSmell();
         smells[4] = new FeatureEnvySmell();
         smells[5] = new HeavyCommentingSmell();
-        smells[6] = new LazyClassSmell();
+        smells[6] = new LazyClassSmell(metrics);
         smells[7] = new RefusedBequestSmell(CUs, metrics);
 
     }

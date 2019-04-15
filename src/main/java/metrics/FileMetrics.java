@@ -18,8 +18,9 @@ public class FileMetrics {
     private List<ConstructorDeclaration> classConstructors;
     private List<Integer> classLengths;
     private List<Comment> classComments;
-    private List<ClassOrInterfaceType> extendsAndImplements;
-    private int numOfFields;
+    private List<ClassOrInterfaceType> extendedTypes;
+    private List<ClassOrInterfaceType> implementedTypes;
+    private List<FieldDeclaration> fields;
     private int numOfPublicFields;
     private int numOfMethods;
     private int numOfPublicMethods;
@@ -35,7 +36,9 @@ public class FileMetrics {
         classConstructors = new ArrayList<>();
         classLengths = new ArrayList<>();
         classComments = new ArrayList<>();
-        extendsAndImplements = new ArrayList<>();
+        extendedTypes = new ArrayList<>();
+        implementedTypes = new ArrayList<>();
+        fields = new ArrayList<>();
         extractMetrics();
     }
 
@@ -56,8 +59,8 @@ public class FileMetrics {
         for(TypeDeclaration t : cu.getTypes()){
             if(t.isClassOrInterfaceDeclaration() && !t.isAnnotationDeclaration()) {
                 if(!((ClassOrInterfaceDeclaration)t).getExtendedTypes().isEmpty()){
-                    extendsAndImplements.addAll(((ClassOrInterfaceDeclaration)t).getExtendedTypes());
-                    extendsAndImplements.addAll(((ClassOrInterfaceDeclaration)t).getImplementedTypes());
+                    extendedTypes.addAll(((ClassOrInterfaceDeclaration)t).getExtendedTypes());
+                    implementedTypes.addAll(((ClassOrInterfaceDeclaration)t).getImplementedTypes());
                 }
                 classNames.add(t.getName().toString());
                 // Find Inner Classes
@@ -71,13 +74,10 @@ public class FileMetrics {
     }
 
     private void extractNumOfFields(){
-        List<FieldDeclaration> fields = new ArrayList<>();
         VoidVisitor<List<FieldDeclaration>> fieldCollector = new FieldCollector();
         fieldCollector.visit(cu, fields);
 
         for(FieldDeclaration f : fields){
-            numOfFields++;
-
             if(f.isPublic())
                 numOfPublicFields++;
         }
@@ -125,8 +125,8 @@ public class FileMetrics {
         return classLengths;
     }
 
-    public int getNumOfFields() {
-        return numOfFields;
+    public List<FieldDeclaration> getFields() {
+        return fields;
     }
 
     public int getNumOfPublicFields() {
@@ -169,10 +169,11 @@ public class FileMetrics {
         return innerClassMethods;
     }
 
-    public List<ClassOrInterfaceType> getExtendsAndImplements() {
-        return extendsAndImplements;
+    public List<ClassOrInterfaceType> getExtendedTypes() {
+        return extendedTypes;
+    }
+
+    public List<ClassOrInterfaceType> getImplementedTypes() {
+        return implementedTypes;
     }
 }
-
-
-//TODO Extract private class Listener from Collector

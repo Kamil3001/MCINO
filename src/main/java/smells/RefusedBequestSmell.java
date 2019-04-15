@@ -32,7 +32,7 @@ public class RefusedBequestSmell extends AbstractCodeSmell {
         and if a class extends an abstract class or implements interfaces it is assumed that the goal is polymorphism and thus
         refused bequest is not a problem in this case either
          */
-        if(!metrics.getExtendsAndImplements().isEmpty() && !extendsAbstractOrInterface(metrics)){
+        if((!metrics.getExtendedTypes().isEmpty() || !metrics.getImplementedTypes().isEmpty()) && !extendsAbstractOrInterface(metrics)){
             int numOfOverrides = 0;
             boolean someMethodsUsed = false;
 
@@ -43,7 +43,7 @@ public class RefusedBequestSmell extends AbstractCodeSmell {
                     numOfOverrides++;
 
                 if(!someMethodsUsed && timesMethodUsed(md, metrics) > 3) { //assume that method is used if there are more than 3 uses of method with same name
-                    someMethodsUsed = !someMethodsUsed;
+                    someMethodsUsed = true;
                 }
                 else{
                     //todo could add occurrence of likely unused method
@@ -71,7 +71,13 @@ public class RefusedBequestSmell extends AbstractCodeSmell {
         for(CompilationUnit cu : CUs){ //number of files
             for(TypeDeclaration t : cu.getTypes()){ //number of classes within a file (usually 1)
                 if(t.isClassOrInterfaceDeclaration()){
-                    for(ClassOrInterfaceType c : metrics.getExtendsAndImplements()){ //if file is a class iteration will be 1, if interface, it can be more
+                    for(ClassOrInterfaceType c : metrics.getExtendedTypes()){ //if file is a class iteration will be 1, if interface, it can be more
+                        if(t.getName().asString().contains(c.getName().asString())){
+                            if(((ClassOrInterfaceDeclaration)t).isAbstract() || ((ClassOrInterfaceDeclaration)t).isInterface())
+                                return true;
+                        }
+                    }
+                    for(ClassOrInterfaceType c : metrics.getImplementedTypes()){ //if file is a class iteration will be 1, if interface, it can be more
                         if(t.getName().asString().contains(c.getName().asString())){
                             if(((ClassOrInterfaceDeclaration)t).isAbstract() || ((ClassOrInterfaceDeclaration)t).isInterface())
                                 return true;
