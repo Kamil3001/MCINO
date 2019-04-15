@@ -229,14 +229,14 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
         return smellName;
     }
 
-    @Override
+    /*@Override
     public List<Integer> getOccurrences() {
         List<Integer> list = new ArrayList<>();
         for (Occurrence occ : duplicateLines.keySet()) {
             list.add(occ.getRange().getStart()); //todo change this to what you need, im guessing start line is what you're looking for but i wasn't sure
         }
         return list;
-    }
+    }*/
 
     @Override
     public int getSeverity() {

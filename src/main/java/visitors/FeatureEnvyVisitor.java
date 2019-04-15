@@ -17,7 +17,6 @@ public class FeatureEnvyVisitor extends VoidVisitorAdapter<Object> {
         super.visit(n, arg);
         if(!n.toString().startsWith("this.") && !n.toString().startsWith("System.")){
             count++;
-            System.out.println(n.toString());
         }
     }
 

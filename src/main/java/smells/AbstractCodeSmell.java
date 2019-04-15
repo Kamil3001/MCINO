@@ -2,6 +2,7 @@ package smells;
 
 
 import metrics.FileMetrics;
+import results.Occurrence;
 import results.Resultable;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.List;
 public abstract class AbstractCodeSmell implements Resultable {
 
     int severity = 0;
-    List<Integer> occurrences = new ArrayList<>();
+    List<Occurrence> occurrences = new ArrayList<>();
 
     //method which detects the smell and assigns the relevant values to severity and occurrences
     public abstract void detectSmell(FileMetrics metrics);
@@ -25,7 +26,7 @@ public abstract class AbstractCodeSmell implements Resultable {
 
     //returns the occurrences of the smell, and null if not applicable
     @Override
-    public List<Integer> getOccurrences() {
+    public List<Occurrence> getOccurrences() {
         if(occurrences.isEmpty())
             return null;
 

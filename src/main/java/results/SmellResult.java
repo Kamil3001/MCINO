@@ -18,7 +18,7 @@ public class SmellResult {
     private String smellName;
     private int totalSeverity = 0; //default value for severity of the smell in entire directory
     private int totalOccurrences = 0;
-    private HashMap<String, List<Integer>> occurrencesPerFile; //stored as line numbers rather than entire strings (null for smells like cyclomatic complexity)
+    private HashMap<String, List<Occurrence>> occurrencesPerFile; //stored as line numbers rather than entire strings (null for smells like cyclomatic complexity)
     private HashMap<String, Integer> severityPerFile;
 
     public SmellResult(String smellName){
@@ -29,7 +29,7 @@ public class SmellResult {
 
     //returns false if cannot add to hashmap (due to incorrect format or such)
     //overwriting occurrences is not permitted to avoid unexpected changes to results
-    public boolean addOccurrences(String fileName, List<Integer> occurrences){
+    public boolean addOccurrences(String fileName, List<Occurrence> occurrences){
         if(occurrencesPerFile.containsKey(fileName)) {
             return false;
         }
@@ -38,12 +38,12 @@ public class SmellResult {
             return true;
         }
 
-        //occurrences cannot be negative
+        //occurrences cannot have negatives in range
         int sum = 0;
-        for(Integer i : occurrences){
-            if(i < 0)
+        for(Occurrence o : occurrences){
+            if(o.getRange().getStart() < 0 || o.getRange().getEnd() < 0)
                 return false;
-            sum += i;
+            sum++;
         }
 
         totalOccurrences += sum;
@@ -79,7 +79,7 @@ public class SmellResult {
         return severityPerFile;
     }
 
-    public HashMap<String, List<Integer>> getOccurrencesPerFile() {
+    public HashMap<String, List<Occurrence>> getOccurrencesPerFile() {
         return occurrencesPerFile;
     }
 }
