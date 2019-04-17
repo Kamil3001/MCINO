@@ -41,7 +41,7 @@ public class SmellResult {
         //occurrences cannot have negatives in range
         int sum = 0;
         for(Occurrence o : occurrences){
-            if(o.getRange().getStart() < 0 || o.getRange().getEnd() < 0)
+            if(o.getStartLine() < 0 || o.getEndLine() < 0)
                 return false;
             sum++;
         }

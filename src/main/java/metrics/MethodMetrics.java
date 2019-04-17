@@ -10,7 +10,8 @@ public class MethodMetrics {
     private int numOfParams;
     private int numOfLines;
     private int modifiers;
-    private Integer startLine;
+    private int startLine;
+    private int endLine;
     private MethodDeclaration md;
     private BlockStmt body;
 
@@ -23,6 +24,7 @@ public class MethodMetrics {
     private void computeMetrics(MethodDeclaration md){
         if(md.getBody().isPresent()){
             startLine = md.getBegin().isPresent() ?  md.getBegin().get().line : -1;
+            endLine = md.getEnd().isPresent() ? md.getEnd().get().line : -1;
             body = md.getBody().get();
             numOfLines = body.toString().length() - body.toString().replace("\n", "").length();
 
@@ -62,6 +64,11 @@ public class MethodMetrics {
     public int getStartLine(){
         return startLine;
     }
+
+    public int getEndLine() {
+        return endLine;
+    }
+
     public MethodDeclaration getMethodDeclaration() {
         return md;
     }

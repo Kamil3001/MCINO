@@ -7,6 +7,7 @@ import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import metrics.FileMetrics;
 import metrics.MethodMetrics;
+import results.Occurrence;
 import visitors.MethodCallVisitor;
 
 import java.util.Map;
@@ -46,7 +47,7 @@ public class RefusedBequestSmell extends AbstractCodeSmell {
                     someMethodsUsed = true;
                 }
                 else{
-                    //todo could add occurrence of likely unused method
+                    occurrences.add(new Occurrence(entry.getValue().getStartLine(), entry.getValue().getEndLine())); //otherwise assume method is unused
                 }
             }
 

@@ -4,14 +4,13 @@ package smells;
 import metrics.FileMetrics;
 import visitors.CyclomaticComplexityVisitor;
 
-import java.util.List;
-
 //count num of ifs, else ifs, switch cases and loops
 public class CyclomaticComplexitySmell extends AbstractCodeSmell {
     private final static String smellName = "Cyclomatic Complexity";
 
     @Override
     public void detectSmell(FileMetrics metrics) {
+        //the visitor does the counting for us
         CyclomaticComplexityVisitor ccv = new CyclomaticComplexityVisitor(metrics.getCompilationUnit());
         int cyclomaticComplexity = ccv.getComplexity();
 
@@ -21,8 +20,6 @@ public class CyclomaticComplexitySmell extends AbstractCodeSmell {
             severity = 2;
         else if(cyclomaticComplexity > 10) //low
             severity = 1;
-        else
-            severity = 0;
     }
 
     @Override

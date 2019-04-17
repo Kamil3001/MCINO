@@ -1,29 +1,19 @@
 package results;
 
 public class Occurrence {
-    private final String smellName;
-    private String className;
-    private String methodName;
-    private Range occurenceRange;
+    private int startLine;
+    private int endLine;
 
-    public Occurrence(String smellName, String className, String methodName, int startLine, int endLine){
-        this.smellName = smellName;
-        this.className = className;
-        this.methodName = methodName;
-        occurenceRange = new Range(startLine, endLine);
+    public Occurrence(int startLine, int endLine){
+        this.startLine = startLine;
+        this.endLine = endLine;
     }
 
-    public String getSmellName() {
-        return smellName;
+    public int getStartLine(){
+        return startLine;
     }
 
-    public String getClassName() {
-        return className;
+    public int getEndLine(){
+        return endLine;
     }
-
-    public Range getRange() {
-        return occurenceRange;
-    }
-
-    public String getMethodName(){ return methodName;}
 }

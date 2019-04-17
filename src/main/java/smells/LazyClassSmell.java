@@ -21,18 +21,20 @@ public class LazyClassSmell extends AbstractCodeSmell {
     private List<String> lazyClasses;
     private FileMetrics[] allMetrics;
 
+    //Look for all lazy classes upon instantiation
     public LazyClassSmell(FileMetrics[] allMetrics){
         lazyClasses = new ArrayList<>();
         this.allMetrics = allMetrics;
         findLazyClasses();
     }
 
-    //todo UI & test classes seen as lazy
+    //todo try and fix UI and test classes being seen as Lazy
     private void findLazyClasses(){
         Set<String> projectClassSet = new HashSet<>();
         Set<String> superClassSet = new HashSet<>();
         Set<String> associateClassSet = new HashSet<>();
         Set<String> dependentClassSet = new HashSet<>();
+
         for(FileMetrics fm : allMetrics) {
             projectClassSet.addAll(fm.getClassNames());
 
@@ -59,6 +61,8 @@ public class LazyClassSmell extends AbstractCodeSmell {
         lazyClasses.addAll(projectClassSet);
     }
 
+    //this method simply returns severity 3 if class is deemed to be Lazy Class and 0 otherwise
+    //Using the lazyClasses hashmap to check if a given class is contained in the set
     @Override
     public void detectSmell(FileMetrics metrics) {
         for(String className : metrics.getClassNames()){

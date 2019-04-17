@@ -24,7 +24,7 @@ public abstract class AbstractCodeSmell implements Resultable {
         return severity;
     }
 
-    //returns the occurrences of the smell, and null if not applicable
+    //returns the occurrences of the smell, and null if not applicable like in the case of cyclomatic complexity
     @Override
     public List<Occurrence> getOccurrences() {
         if(occurrences.isEmpty())

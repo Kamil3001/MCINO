@@ -17,6 +17,7 @@ public class FeatureEnvySmell extends AbstractCodeSmell{
             FeatureEnvyVisitor v = new FeatureEnvyVisitor(entry.getValue().getMethodDeclaration());
             if(v.getNumOfFieldAccesses() > 5){
                 numOfProblematicMethods++;
+                occurrences.add(new Occurrence(entry.getValue().getStartLine(), entry.getValue().getEndLine()));
                 //todo add to occurrences here
             }
 

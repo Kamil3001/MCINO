@@ -22,60 +22,41 @@ public class BloatedCodeSmell extends AbstractCodeSmell {
         avgMethodLength = (metrics.getNumOfMethods() >0) ?  avgMethodLength/metrics.getNumOfMethods() : 0;
 
 
-        if(metrics.getNumOfMethods() > 50){
-            if(avgMethodLength > 30 || metrics.getClassLengths().get(0) > 1000){
+        //depending on number of methods we use the corresponding average method lengths and/or total class lengths to set severities
+        int methodsNum = metrics.getNumOfMethods();
+        int mainClassLength = metrics.getClassLengths().get(0);
+
+        if(methodsNum > 40){
+            if(avgMethodLength > 40 || mainClassLength > 1150){
                 severity = 3;
             }
-            else if(avgMethodLength > 20 || metrics.getClassLengths().get(0) > 850){
+            else if(avgMethodLength > 30 || mainClassLength > 1000){
                 severity = 2;
             }
-            else if(avgMethodLength > 10 || metrics.getClassLengths().get(0) > 700) {
+            else if(avgMethodLength > 20 || mainClassLength > 850) {
                 severity = 1;
-            }
-            else{
-                severity = 0;
             }
         }
-        else if(metrics.getNumOfMethods() > 40){
-            if(avgMethodLength > 40 || metrics.getClassLengths().get(0) > 1150){
+        else if(methodsNum > 30){
+            if(avgMethodLength > 50 || mainClassLength > 1300){
                 severity = 3;
             }
-            else if(avgMethodLength > 30 || metrics.getClassLengths().get(0) > 1000){
+            else if(avgMethodLength > 40 || mainClassLength > 1150){
                 severity = 2;
             }
-            else if(avgMethodLength > 20 || metrics.getClassLengths().get(0) > 850) {
+            else if(avgMethodLength > 30 || mainClassLength > 1000) {
                 severity = 1;
-            }
-            else{
-                severity = 0;
-            }
-        }
-        else if(metrics.getNumOfMethods() > 30){
-            if(avgMethodLength > 50 || metrics.getClassLengths().get(0) > 1300){
-                severity = 3;
-            }
-            else if(avgMethodLength > 40 || metrics.getClassLengths().get(0) > 1150){
-                severity = 2;
-            }
-            else if(avgMethodLength > 30 || metrics.getClassLengths().get(0) > 1000) {
-                severity = 1;
-            }
-            else{
-                severity = 0;
             }
         }
         else if(!metrics.getClassLengths().isEmpty()){
-            if(avgMethodLength > 60 || metrics.getClassLengths().get(0) > 1450){
+            if(avgMethodLength > 60 || mainClassLength > 1450){
                 severity = 3;
             }
-            else if(avgMethodLength > 50 || metrics.getClassLengths().get(0) > 1300){
+            else if(avgMethodLength > 50 || mainClassLength > 1300){
                 severity = 2;
             }
-            else if(avgMethodLength > 40 || metrics.getClassLengths().get(0) > 1150) {
+            else if(avgMethodLength > 40 || mainClassLength > 1150) {
                 severity = 1;
-            }
-            else{
-                severity = 0;
             }
         }
     }

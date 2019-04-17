@@ -3,6 +3,7 @@ package smells;
 import com.github.javaparser.Position;
 import metrics.FileMetrics;
 import metrics.MethodMetrics;
+import results.Occurrence;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class DataClumpsSmell extends AbstractCodeSmell {
 
             if(numOfParams > 4){
                 Optional<Position> methodStart = entry.getValue().getMethodDeclaration().getName().getBegin(); //method start excl annotations
-                //methodStart.ifPresent(position -> occurrences.add(position.line)); //todo functional style for adding beginning to occurrences if present
+                methodStart.ifPresent(position -> occurrences.add(new Occurrence(position.line, position.line))); //functional style for adding beginning to occurrences if present
             }
 
             avgNumOfParams += numOfParams;
