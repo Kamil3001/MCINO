@@ -3,7 +3,6 @@ package smells;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.*;
-import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import metrics.FileMetrics;
 import metrics.MethodMetrics;
