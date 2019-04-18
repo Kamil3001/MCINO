@@ -58,10 +58,12 @@ public class FileMetrics {
     private void extractClassNames(){
         for(TypeDeclaration t : cu.getTypes()){
             if(t.isClassOrInterfaceDeclaration() && !t.isAnnotationDeclaration()) {
-                if(!((ClassOrInterfaceDeclaration)t).getExtendedTypes().isEmpty()){
+                if(!((ClassOrInterfaceDeclaration)t).getExtendedTypes().isEmpty())
                     extendedTypes.addAll(((ClassOrInterfaceDeclaration)t).getExtendedTypes());
+
+                if(!((ClassOrInterfaceDeclaration)t).getImplementedTypes().isEmpty())
                     implementedTypes.addAll(((ClassOrInterfaceDeclaration)t).getImplementedTypes());
-                }
+
                 classNames.add(t.getName().toString());
                 // Find Inner Classes
                 for (int i = 0; i < t.getMembers().size(); i++) {
@@ -157,7 +159,7 @@ public class FileMetrics {
         return cu;
     }
 
-    public List<ClassOrInterfaceDeclaration> getSubClasses() {
+    public List<ClassOrInterfaceDeclaration> getInnerClasses() {
         return innerClasses;
     }
 
