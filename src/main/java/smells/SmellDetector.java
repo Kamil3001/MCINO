@@ -26,15 +26,16 @@ public class SmellDetector {
     }
 
     private void instantiateSmells(){
-        smells = new AbstractCodeSmell[8];
-        smells[0] = new BloatedCodeSmell();
-        smells[1] = new CyclomaticComplexitySmell();
-        smells[2] = new DataClumpsSmell();
-        smells[3] = new DuplicatedCodeSmell();
-        smells[4] = new FeatureEnvySmell();
-        smells[5] = new HeavyCommentingSmell();
-        smells[6] = new LazyClassSmell(metrics);
-        smells[7] = new RefusedBequestSmell(CUs, metrics);
+        smells = new AbstractCodeSmell[9];
+        smells[0] = new LongMethodsSmell();
+        smells[1] = new LongClassSmell();
+        smells[2] = new CyclomaticComplexitySmell();
+        smells[3] = new DataClumpsSmell();
+        smells[4] = new DuplicatedCodeSmell();
+        smells[5] = new FeatureEnvySmell();
+        smells[6] = new HeavyCommentingSmell();
+        smells[7] = new LazyClassSmell(metrics);
+        smells[8] = new RefusedBequestSmell(CUs, metrics);
 
     }
 
