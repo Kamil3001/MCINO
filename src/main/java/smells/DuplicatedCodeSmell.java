@@ -1,10 +1,9 @@
 package smells;
 
+import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
-
-import java.lang.reflect.Modifier;
 
 import java.util.*;
 
@@ -50,7 +49,7 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
         while(!methods.isEmpty()){
             aMethod = (MethodMetrics) methods.remove(methodNames.get(0));
             methodNames.remove(methodNames.get(0));
-            if (!Modifier.isAbstract(aMethod.getModifiers())) {
+            if (!aMethod.getModifiers().contains(Modifier.abstractModifier())) {
                 findBlockDuplicates(aMethod.getBody());
 
             }

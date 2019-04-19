@@ -1,15 +1,15 @@
 package metrics;
 
+import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
-import com.github.javaparser.ast.stmt.Statement;
 
 
 public class MethodMetrics {
     private int numOfParams;
     private int numOfLines;
-    private int modifiers;
+    private NodeList<Modifier> modifiers;
     private int startLine;
     private int endLine;
     private MethodDeclaration md;
@@ -22,16 +22,15 @@ public class MethodMetrics {
 
     //Extracting number of lines and parameters of the method from MethodDeclaration
     private void computeMetrics(MethodDeclaration md){
+        modifiers = md.getModifiers();
         if(md.getBody().isPresent()){
-            startLine = md.getBegin().isPresent() ?  md.getBegin().get().line : -1;
-            endLine = md.getEnd().isPresent() ? md.getEnd().get().line : -1;
             body = md.getBody().get();
-            numOfLines = body.toString().length() - body.toString().replace("\n", "").length();
+            numOfLines = body.getEnd().get().line - body.getBegin().get().line + 1;
+            startLine = body.getBegin().get().line;
+            endLine = body.getEnd().get().line;
 
         }
         else{
-            //Abstract method
-            modifiers += 1024;
             numOfLines = 0;
         }
         numOfParams = md.getParameters().size();
@@ -45,10 +44,6 @@ public class MethodMetrics {
         return body;
     }
 
-    public NodeList<Statement> getStatements(){
-        return md.getBody().isPresent() ? md.getBody().get().getStatements() : null;
-    }
-
     public int getNumOfStatements() {
         return md.getBody().isPresent() ? md.getBody().get().getStatements().size() : 0;
     }
@@ -57,7 +52,7 @@ public class MethodMetrics {
         return numOfParams;
     }
 
-    public int getModifiers() {
+    public NodeList<Modifier> getModifiers() {
         return modifiers;
     }
 
