@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Long Class</title>
+</head>
+<body>
+<h2>What is a Long Class smell?</h2>
+When a class contains many fields/methods/lines of code.
+
+<h2>How to treat?</h2>
+<ul>
+    <li>Extract Class helps if part of the behavior of the large class can be spun off into a separate component.</li>
+    <li>Extract Subclass helps if part of the behavior of the large class can be implemented in different ways or is used in rare cases.</li>
+    <li>Extract Interface helps if it’s necessary to have a list of the operations and behaviors that the client can use.</li>
+    <li>If a large class is responsible for the graphical interface, you may try to move some of its data and behavior to a separate domain object. In doing so, it may be necessary to store copies of some data in two places and keep the data consistent. Duplicate Observed Data offers a way to do this.</li>
+</ul>
+
+<h2>Why bother?</h2>
+<ul>
+    <li>Refactoring of these classes spares developers from needing to remember a large number of attributes for a class.</li>
+    <li>In many cases, splitting large classes into parts avoids duplication of code and functionality.</li>
+</ul>
+</body>
+</html>

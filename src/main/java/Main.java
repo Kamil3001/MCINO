@@ -12,12 +12,12 @@ public class Main extends Application {
 
     static Stage stage = null;
 
-
     @Override
     public void start(Stage primaryStage) throws IOException {
         FXMLLoader fxmlLoader = new  FXMLLoader(getClass().getResource("ui.fxml"));
         System.out.println(getClass().getResource("ui.fxml"));
         AnchorPane root = fxmlLoader.load();
+
 
         Scene scene = new Scene(root);
         primaryStage.setMaximized(false);

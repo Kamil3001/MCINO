@@ -1,4 +1,6 @@
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,6 +12,8 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.util.Callback;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -17,11 +21,15 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import results.SmellResult;
 import smells.SmellDetector;
+import utils.Comments;
+import utils.HTMLUtil;
 import utils.SyntaxHighlighter;
 
 import java.io.File;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.ResourceBundle;
 
@@ -49,6 +57,9 @@ public class UI implements Initializable {
     private AnchorPane root;
 
     @FXML
+    private TabPane tabAbout;
+
+    @FXML
     private StackPane codePane;
 
     private double xOffset = 0;
@@ -61,19 +72,23 @@ public class UI implements Initializable {
     private SyntaxHighlighter highlight;
 
     private final String[] defaultColors = {":#f3622d",
-                                                ":#fba71b",
-                                                ":#57b757",
-                                                ":#41a9c9",
-                                                ":#4258c9",
-                                                ":#9a42c8",
-                                                ":#c84164",
-                                                ":#888888"};
+            ":#fba71b",
+            ":#57b757",
+            ":#41a9c9",
+            ":#4258c9",
+            ":#9a42c8",
+            ":#c84164",
+            ":#888888"};
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         highlight = new SyntaxHighlighter();
+
+
         makeStageDraggable();
+        makeTabPaneListener();
+
         openHome();
     }
 
@@ -137,6 +152,8 @@ public class UI implements Initializable {
     void handleDetails(MouseEvent event) {
         if(event.getSource() == btnShowDetails)
         {
+            String file = comboSource.getSelectionModel().getSelectedItem();
+            String smell = comboSmell.getSelectionModel().getSelectedItem();
             if(comboSource.getSelectionModel().getSelectedItem() != null && comboSmell.getSelectionModel().getSelectedItem() != null) {
                 codePane.getChildren().clear();
                 CodeArea codeSource = new CodeArea();
@@ -148,6 +165,15 @@ public class UI implements Initializable {
                 codeSource.replaceText(0, 0, smellDetector.getSourceFiles().get(comboSource.getSelectionModel().getSelectedItem()));
                 codeSource.setEditable(false);
                 codePane.getChildren().add(new VirtualizedScrollPane<>(codeSource));
+                lblSource.setText(file);
+                int severity = 0;
+                for(SmellResult s: smellDetector.getSmellResults())
+                {
+                    if(s.getSmellName().equals(smell)){
+                        severity= s.getSeverityPerFile().get(file);
+                    }
+                }
+                lblSmell.setText(Comments.getCommentsClass().getComment(smell, severity) +" \nSeverity is " + severity);
             }else{
                 Alert error = new Alert(Alert.AlertType.ERROR);
                 error.setHeaderText("Please make a selection first.");
@@ -215,6 +241,12 @@ public class UI implements Initializable {
         }
     }
 
+   private void makeTabPaneListener() {
+        for(Tab currTab: tabAbout.getTabs()) {
+            currTab.setOnSelectionChanged(e-> setHtmlContent(currTab));
+        }
+
+    }
 
     /** Helper Functions **/
 
@@ -291,7 +323,7 @@ public class UI implements Initializable {
         pnHome.setVisible(false);
         pnAnalysis.setVisible(false);
         pnDetails.setVisible(false);
-        //pnAbout.setVisible(false);
+        pnAbout.setVisible(false);
     }
 
     private void reset() {
@@ -385,20 +417,21 @@ public class UI implements Initializable {
         pnAbout.toFront();
         pnAbout.setVisible(true);
         lblPage.setText("About");
+        setHtmlContent(tabAbout.getTabs().get(0));
     }
 
     private void addData(String smell, double average, ObservableList<PieChart.Data> pieData ) {
-            for(PieChart.Data d: pieData)
+        for(PieChart.Data d: pieData)
+        {
+            if(d.getName().equals(smell))
             {
-                if(d.getName().equals(smell))
-                {
-                    d.setPieValue(average);
-                    return;
-                }
+                d.setPieValue(average);
+                return;
             }
+        }
 
-            //If smell doesn't exist
-            pieData.add(new PieChart.Data(smell,average));
+        //If smell doesn't exist
+        pieData.add(new PieChart.Data(smell,average));
     }
 
     private void initializeComboBox() {
@@ -467,4 +500,16 @@ public class UI implements Initializable {
         return Integer.parseInt(node.getStyleClass().get(2).substring(node.getStyleClass().get(2).length()-1)); // extracts default color index
     }
 
-    }
+   private void setHtmlContent(Tab currTab){
+        WebView webView = new WebView();
+        WebEngine webEngine = webView.getEngine();
+       String tabName = currTab.getText();
+       webEngine.loadContent(HTMLUtil.getHTMLUtil().getHtml(tabName));
+       webEngine.setUserStyleSheetLocation(getClass().getResource("tab-content.css").toString());
+       currTab.setContent(webView);
+
+   }
+
+
+
+}

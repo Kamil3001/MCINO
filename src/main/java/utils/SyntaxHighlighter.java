@@ -64,7 +64,7 @@ public class SyntaxHighlighter {
                                                                     matcher.group("COMMENT") != null ? "comment" :
                                                                             matcher.group("BODY") != null ? "body" :
                                                                                     matcher.group("CHARACTER") != null? "character":
-                                                                                            null; /* never happens */ assert styleClass != null;
+                                                                                            null;  assert styleClass != null;
             spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
             spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
             lastKwEnd = matcher.end();

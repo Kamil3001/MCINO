@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Refused Bequest</title>
+</head>
+<body>
+<h2>What is a Refused Bequest smell?</h2>
+If a subclass uses only some of the methods and properties inherited from its parents, the hierarchy is off-kilter. The unneeded methods may simply go unused or be redefined and give off exceptions.
+
+<h2>How to treat?</h2>
+<ul>
+    <li>If inheritance makes no sense and the subclass really does have nothing in common with the superclass, eliminate inheritance in favor of Replace Inheritance with Delegation.</li>
+    <li>If inheritance is appropriate, get rid of unneeded fields and methods in the subclass. Extract all fields and methods needed by the subclass from the parent class, put them in a new subclass, and set both classes to inherit from it (Extract Superclass).</li>
+</ul>
+
+<h2>Why bother?</h2>
+<ul>
+    <li>Improves code clarity and organization. You will no longer have to wonder why the Dog class is inherited from the Chair class (even though they both have 4 legs).</li>
+</ul>
+</body>
+</html>

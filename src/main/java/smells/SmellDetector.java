@@ -75,4 +75,5 @@ public class SmellDetector {
     {
         return this.sourceFiles;
     }
+
 }

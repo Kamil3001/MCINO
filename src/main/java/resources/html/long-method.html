@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Long Method</title>
+</head>
+<body>
+<h2>What is a Long Method smell?</h2>
+A method contains too many lines of code.
+
+<h2>How to treat?</h2>
+<ul>
+    <li>To reduce the length of a method body, use Extract Method.</li>
+    <li>If local variables and parameters interfere with extracting a method, use Replace Temp with Query, Introduce Parameter Object or Preserve Whole Object.</li>
+    <li>If none of the previous recipes help, try moving the entire method to a separate object via Replace Method with Method Object.</li>
+    <li>Conditional operators and loops are a good clue that code can be moved to a separate method. For conditionals, use Decompose Conditional. If loops are in the way, try Extract Method.</li>
+</ul>
+
+<h2>Why bother?</h2>
+<ul>
+    <li>Among all types of object-oriented code, classes with short methods live longest. The longer a method or function is, the harder it becomes to understand and maintain it.</li>
+    <li>In addition, long methods offer the perfect hiding place for unwanted duplicate code.</li>
+</ul>
+</body>
+</html>
