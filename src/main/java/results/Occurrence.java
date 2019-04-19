@@ -14,7 +14,7 @@ public class Occurrence {
     public Occurrence(Occurrence linkedOccurrence, int startLine, int endLine) {
         this(startLine, endLine);
         this.linkedOccurrence = linkedOccurrence;
-        this.hasLink = true;
+        hasLink = true;
     }
 
     public int getStartLine(){
@@ -30,8 +30,11 @@ public class Occurrence {
     }
 
     public void setLinkedOccurrence(Occurrence occurrence){
-        this.hasLink = true;
-        this.linkedOccurrence = occurrence;
+        linkedOccurrence = occurrence;
+        if(occurrence == null)
+            hasLink = false;
+        else
+            hasLink = true;
     }
 
     public boolean hasLink(){ return hasLink; }
