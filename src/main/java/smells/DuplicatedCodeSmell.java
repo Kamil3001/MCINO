@@ -49,7 +49,7 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
         while(!methods.isEmpty()){
             aMethod = (MethodMetrics) methods.remove(methodNames.get(0));
             methodNames.remove(methodNames.get(0));
-            if (!aMethod.getModifiers().contains(Modifier.abstractModifier())) {
+            if (!aMethod.getModifiers().contains(Modifier.abstractModifier()) && aMethod.getNumOfLines() > 0) {
                 findBlockDuplicates(aMethod.getBody());
 
             }
