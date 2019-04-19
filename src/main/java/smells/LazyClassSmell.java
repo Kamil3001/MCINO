@@ -1,5 +1,6 @@
 package smells;
 
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import metrics.FileMetrics;
@@ -37,6 +38,12 @@ public class LazyClassSmell extends AbstractCodeSmell {
 
         for(FileMetrics fm : allMetrics) {
             projectClassSet.addAll(fm.getClassNames());
+
+            for(ClassOrInterfaceType cit : fm.getImplementedTypes()){
+                if(cit.getNameAsString().equals("Initializable")){
+                    associateClassSet.addAll(fm.getClassNames());
+                }
+            }
 
             for (ClassOrInterfaceType cit : fm.getExtendedTypes()) {
                 superClassSet.add(cit.asString());
