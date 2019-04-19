@@ -1,6 +1,4 @@
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -19,6 +17,7 @@ import javafx.util.Callback;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
+import results.OverallResult;
 import results.SmellResult;
 import smells.SmellDetector;
 import utils.Comments;
@@ -28,9 +27,6 @@ import utils.SyntaxHighlighter;
 import java.io.File;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
 import java.util.ResourceBundle;
 
 public class UI implements Initializable {
@@ -70,6 +66,8 @@ public class UI implements Initializable {
     private String projectDir;
     private SmellDetector smellDetector;
     private SyntaxHighlighter highlight;
+    private OverallResult overallResult;
+
 
     private final String[] defaultColors = {":#f3622d",
             ":#fba71b",
@@ -139,6 +137,8 @@ public class UI implements Initializable {
                 projectDir = dir.getAbsolutePath();
                 smellDetector = new SmellDetector(projectDir);
                 smellDetector.detectSmells();
+                overallResult = new OverallResult(smellDetector.getSmellResults());
+
                 initializeComboBox();
 
             }else{
@@ -273,13 +273,13 @@ public class UI implements Initializable {
         {
             smell = smellDetector.getSmells()[i].getSmellName();
 
-            average = extractAverageOccurenceOfSmell(smell);
+            average = overallResult.getOverallOccurrences().get(smell);
             addData(smell,average, occurrenceData);
-            //System.out.println(smell+ " " + average);
+            System.out.println(smell+ " " + average);
 
-            average = extractAverageSeverityOfSmell(smell);
+            average = overallResult.getOverallSeverities().get(smell);
             addData(smell,average+1, severityData);
-            //System.out.println(smell+ " " + average);
+            System.out.println(smell+ " " + average);
         }
         System.out.println();
 
@@ -290,34 +290,6 @@ public class UI implements Initializable {
         makeSliceListener();
     }
 
-    // Gets total average severity of a specific smell across all source files
-    private double extractAverageSeverityOfSmell(String smellName){
-        for(SmellResult sr: smellDetector.getSmellResults())
-        {
-            if(sr.getSmellName().equalsIgnoreCase(smellName))
-            {
-                return sr.getAverageSeverity();
-            }
-        }
-        return 0;
-    }
-
-    // Gets total average occurrence of a specific smell across all source files
-    private double extractAverageOccurenceOfSmell(String smellName){
-        double totalAverage = 0.0;
-        int count = 0;
-        for(SmellResult sr: smellDetector.getSmellResults())
-        {
-            if(sr.getSmellName().equalsIgnoreCase(smellName))
-            {
-                totalAverage = totalAverage + sr.getAverageOccurrences();
-                count++;
-            }
-        }
-
-        Random rand = new Random();
-        return (totalAverage/count+rand.nextDouble())*100.0;
-    }
 
     private void hideAllPanes() {
         pnHome.setVisible(false);
