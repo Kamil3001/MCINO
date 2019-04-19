@@ -17,18 +17,15 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
 
     private static int NO_BLOCKS_TO_CHECK = 3;
     private final static String smellName = "Duplicated Code";
-    private String file;
+    private String text;
     private List<String> methodNames;
     private HashMap methods;
-    private int instances = 0;
-    private Map<Occurrence, Occurrence> duplicateLines;
     private RabinKarp rk;
     private int methodStartLine;
-    private String currentMethod;
+    private int methodEndLine;
 
     @Override
     public void detectSmell(FileMetrics metrics) {
-        duplicateLines = new HashMap<>();
         if(getFieldsAndMethods(metrics)) checkMethods();
 
     }
@@ -36,8 +33,6 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
      * @param metrics the current file to analyze
      * @return true if file has methods i.e. is not annotation type**/
     private boolean getFieldsAndMethods(FileMetrics metrics){
-        if(metrics.getCompilationUnit().getTypes().size()>0)
-        file = metrics.getCompilationUnit().getType(0).getName().asString();
         methodNames = new ArrayList<>();
         if(!metrics.getMethodsMetrics().keySet().isEmpty() ) {
             methods = metrics.getMethodsMetrics();
@@ -56,8 +51,6 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
             aMethod = (MethodMetrics) methods.remove(methodNames.get(0));
             methodNames.remove(methodNames.get(0));
             if (!Modifier.isAbstract(aMethod.getModifiers())) {
-                currentMethod = aMethod.getMethodDeclaration().getNameAsString();
-                methodStartLine = aMethod.getStartLine();
                 findBlockDuplicates(aMethod.getBody());
 
             }
@@ -72,35 +65,27 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
      *  2. The rest of the methods in the file.
      *   **/
     private void findBlockDuplicates(BlockStmt block){
-        String text, pattern;
-        int result;
         int size = block.getStatements().size();
         if(size >= NO_BLOCKS_TO_CHECK) {
             // Iterate through blocks of |NO_BLOCKS_TO_CHECK|
             for(int endIndex = 0; endIndex<size- NO_BLOCKS_TO_CHECK; endIndex+=3) {
                 // combine statements, removing comments and whitespace
-                pattern = combineStatements(block, endIndex+(NO_BLOCKS_TO_CHECK-1), false);
-                methodStartLine = block.getStatement(endIndex).getBegin().isPresent() ? block.getStatement(endIndex).getBegin().get().line : -1;
+                String pattern = combineStatements(block, endIndex + (NO_BLOCKS_TO_CHECK - 1), false);
+                if(block.getStatement(endIndex).getBegin().isPresent()
+                        && block.getStatement(endIndex + (NO_BLOCKS_TO_CHECK - 1)).getEnd().isPresent()) {
+                    methodStartLine = block.getStatement(endIndex).getBegin().get().line;
+                    methodEndLine = block.getStatement(endIndex + (NO_BLOCKS_TO_CHECK - 1)).getEnd().get().line;
+                }
                 // instantiate RabinKarp setting the pattern to compare to
                 rk = new RabinKarp(pattern);
                 // If method size is big enough and we haven't reached last place the duplicate could exist
                 if(size >= (2*NO_BLOCKS_TO_CHECK) && endIndex < (size-(2* NO_BLOCKS_TO_CHECK -1)) ) {
                     // for each block of |NO_BLOCKS_TO_CHECK| remaining
                     for (int startIndex = endIndex + NO_BLOCKS_TO_CHECK; startIndex < size - (NO_BLOCKS_TO_CHECK -1); startIndex++) {
-                        int offset = block.getStatement(startIndex).getBegin().isPresent() ? block.getStatement(startIndex).getBegin().get().line : 0;
                         // combine statements, removing comments and whitespace
                         text = combineStatements(block, startIndex, true);
                         // search text for instance of pattern returning location of first character
-                        result = rk.search(text);
-                        if (result > -1) { // if duplicate found
-                            // ensure not false equivalence due to same hashCode
-                            if(getSimilarityPercentage(pattern, text.substring(result, result + pattern.length()))==100.0) {
-                                Occurrence first = new Occurrence(methodStartLine, methodStartLine); //todo change to range values
-                                Occurrence second = new Occurrence(offset, offset); //todo change to range values
-                                duplicateLines.put(first, second); // put instance of duplication in HashMap
-                                instances++;
-                            }
-                        }
+                        searchPattern(pattern, text, block);
                     }
                 }
                 // call method to check files other methods for pattern
@@ -115,23 +100,30 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
      * @param pattern is the pattern we're searching for
      *  **/
     private void checkAllOtherMethods(String pattern){
-        String text;
-        int result;
         for (String methodName : methodNames) {
             MethodMetrics methodMetrics = (MethodMetrics) methods.get(methodName);
             BlockStmt aBody = methodMetrics.getBody();
             if (methodMetrics.getNumOfStatements() >= NO_BLOCKS_TO_CHECK) {
                 text = combineStatements(aBody, 0, true);
-                result = rk.search(text);
-                if (result > -1) {
-                    if (getSimilarityPercentage(pattern, text.substring(result, result + pattern.length())) == 100.0) {
-                        Occurrence first = new Occurrence(methodStartLine , methodStartLine); //todo change to range values
-                        Occurrence second = new Occurrence(lineNumberOfChar(result, aBody), lineNumberOfChar(result, aBody)); //todo change to range values
-                        duplicateLines.put(first, second);
-                        instances++;
-                    }
-                }
+                searchPattern(pattern, text, aBody);
             }
+        }
+    }
+
+    private void searchPattern(String pattern, String text, BlockStmt block){
+        int result = rk.search(text);
+        if (result > -1) {
+            double similar = getSimilarityPercentage(pattern, text.substring(result, result + pattern.length()));
+            if (similar == 100.0) {
+                int lineNumber = lineNumberOfChar(result, block);
+                Occurrence first = new Occurrence(methodStartLine , methodEndLine);
+                Occurrence second = new Occurrence(first, lineNumber , (lineNumber+(methodEndLine-methodStartLine)));
+                first.setLinkedOccurrence(second);
+                occurrences.add(second);
+                severity = 3;
+            }
+            else if(similar > 97) severity = 2;
+            else if(similar > 95) severity = 1;
         }
     }
 
@@ -193,21 +185,23 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
 
     /** For a given character number returned from rk.search() in RabinKarp this method
      * returns the line number that the duplicateion blocks start
-     * @param result output from .search() i.e. character number not including whitespcae or newline
+     * @param result output from .search() i.e. character number not including whitespace or newline
      * @param block the block we need to find the line number of
      * @return line number of charAt(result)*/
     private int lineNumberOfChar(int result, BlockStmt block){
         int size = block.getStatements().size();
         List<Statement> statements = block.getStatements();
         for(int i=0;i<size;i++){
-            int length = removeComments(statements.get(i).toString()).length();
+            int length = removeWhitespaceAndNewline(removeComments(statements.get(i).toString())).length();
             if(result < length) return statements.get(i).getBegin().isPresent() ? statements.get(i).getBegin().get().line : -1;
             result-=length;
         }
         return -1;
     }
 
-    /**                     NOT USED ATM
+    /** NOT USED ATM but could be used to search for methods with low severity similarity
+     *  i.e. methods that return >97 from getSimilarityPercentage
+     *  but return -1 from rk.search(text) so wont get checked
      * This method will replace all parameters of equal type in a method */
     private String replaceParameters(MethodMetrics aMethod, MethodMetrics anotherMethod){
 
@@ -229,20 +223,10 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
         return smellName;
     }
 
-    /*@Override
-    public List<Integer> getOccurrences() {
-        List<Integer> list = new ArrayList<>();
-        for (Occurrence occ : duplicateLines.keySet()) {
-            list.add(occ.getRange().getStart()); //todo change this to what you need, im guessing start line is what you're looking for but i wasn't sure
-        }
-        return list;
-    }*/
-
     @Override
     public int getSeverity() {
-        return instances;
+        return severity;
     }
-    public Map getDuplicates(){ return duplicateLines; }
 
     /* DUPLICATE CODE EXAMPLE - Uncomment for match with combineStatements() */
 //    private String aMethod(BlockStmt block, int index, boolean indexIsStart){
