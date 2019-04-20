@@ -1,8 +1,11 @@
 package smells;
 
-
 import metrics.FileMetrics;
+import metrics.MethodMetrics;
+import results.Occurrence;
 import visitors.CyclomaticComplexityVisitor;
+
+import java.util.Map;
 
 //count num of ifs, else ifs, switch cases and loops
 public class CyclomaticComplexitySmell extends AbstractCodeSmell {
@@ -11,14 +14,23 @@ public class CyclomaticComplexitySmell extends AbstractCodeSmell {
     @Override
     public void detectSmell(FileMetrics metrics) {
         //the visitor does the counting for us
-        CyclomaticComplexityVisitor ccv = new CyclomaticComplexityVisitor(metrics.getCompilationUnit());
-        int cyclomaticComplexity = ccv.getComplexity();
+        CyclomaticComplexityVisitor ccv;
+        float avgCC = 0;
 
-        if(cyclomaticComplexity > 20) //high
+        for(Map.Entry<String, MethodMetrics> entry : metrics.getMethodsMetrics().entrySet()){
+            ccv = new CyclomaticComplexityVisitor(entry.getValue().getMethodDeclaration());
+            avgCC += ccv.getComplexity();
+            if(ccv.getComplexity() > 10){
+                occurrences.add(new Occurrence(entry.getValue().getStartLine(), entry.getValue().getEndLine()));
+            }
+        }
+        avgCC = metrics.getNumOfMethods() > 0 ? avgCC/metrics.getNumOfMethods() : 0;
+
+        if(avgCC > 30) //high
             severity = 3;
-        else if(cyclomaticComplexity > 15) //medium
+        else if(avgCC > 20) //medium
             severity = 2;
-        else if(cyclomaticComplexity > 10) //low
+        else if(avgCC > 10) //low
             severity = 1;
     }
 

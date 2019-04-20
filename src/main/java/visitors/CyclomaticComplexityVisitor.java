@@ -1,6 +1,6 @@
 package visitors;
 
-import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
@@ -8,8 +8,8 @@ public class CyclomaticComplexityVisitor extends VoidVisitorAdapter<Object> {
 
     private int count = 1; //cyclomatic complexity = num of (if, elsifs, switch cases, loops) + 1
 
-    public CyclomaticComplexityVisitor(CompilationUnit cu){
-        visit(cu, new Object());
+    public CyclomaticComplexityVisitor(MethodDeclaration md){
+        visit(md, new Object());
     }
 
     public int getComplexity(){
