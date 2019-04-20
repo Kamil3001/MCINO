@@ -23,8 +23,9 @@ public class DataClumpsSmell extends AbstractCodeSmell {
         //this is a hard smell to detect accurately because of the potential variety in parameters passed in
         //Workaround: Assume that high number of parameters to a method is a sign data clumps are possible
         //  Thus if average number of parameters is high, they can likely be grouped into objects
+        // Assumption: Class constructors are allowed to have large number of parameters to create the objects
 
-        int avgNumOfParams = 0;
+        double avgNumOfParams = 0;
         int maxNumOfParams = 0;
         for(Map.Entry<String, MethodMetrics> entry : metrics.getMethodsMetrics().entrySet()){
             int numOfParams = entry.getValue().getNumOfParams();
