@@ -18,15 +18,15 @@ public class HeavyCommentingSmell extends AbstractCodeSmell{
 
         int numOfComments = metrics.getCompilationUnit().getComments().size();
 
-        if(numOfComments > metrics.getNumOfMethods() * 20) {
+        if(numOfComments > metrics.getNumOfMethods() * 15) {
             //way too many comments which likely means code is hard to read
             severity = 3;
         }
-        else if(numOfComments > metrics.getNumOfMethods()*15){
+        else if(numOfComments > metrics.getNumOfMethods()* 10){
             //the number of comments is still dangerously high
             severity = 2;
         }
-        else if(numOfComments > metrics.getNumOfMethods() * 10){
+        else if(numOfComments > metrics.getNumOfMethods() * 5){
             //the number of comments is okay but is approaching a large number
             severity = 1;
         }
