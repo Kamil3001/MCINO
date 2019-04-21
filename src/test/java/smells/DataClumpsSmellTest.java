@@ -138,6 +138,7 @@ public class DataClumpsSmellTest {
             assertEquals(occurrences[i].getStartLine(), o.getStartLine());
             assertEquals(occurrences[i++].getEndLine(), o.getEndLine());
         }
+        assertEquals(4, i);
     }
 
     @Test
