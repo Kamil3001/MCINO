@@ -2,6 +2,7 @@ package visitors;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
@@ -20,6 +21,11 @@ public class MethodDependentVarsVisitor extends VoidVisitorAdapter<Void> {
     @Override
     public void visit(ClassOrInterfaceType n, Void arg) {
         types.add(n.getNameAsString());
+        super.visit(n, arg);
+    }
+
+    @Override
+    public void visit(VariableDeclarationExpr n, Void arg) {
         super.visit(n, arg);
     }
 

@@ -65,6 +65,7 @@ public class LazyClassSmell extends AbstractCodeSmell {
         projectClassSet.removeAll(superClassSet);
         projectClassSet.removeAll(associateClassSet);
         projectClassSet.removeAll(dependentClassSet);
+
         lazyClasses.addAll(projectClassSet);
     }
 
@@ -72,10 +73,11 @@ public class LazyClassSmell extends AbstractCodeSmell {
     //Using the lazyClasses hashmap to check if a given class is contained in the set
     @Override
     public void detectSmell(FileMetrics metrics) {
+        severity = 0;
         for(String className : metrics.getClassNames()){
             if(lazyClasses.contains(className)){
+                System.out.println("1" + className);
                 severity = 3;
-                //System.out.println("3: " + metrics.getClassNames().get(0));
                 break;
             }
         }
