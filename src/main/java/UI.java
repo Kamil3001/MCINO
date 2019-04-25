@@ -1,15 +1,17 @@
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.chart.PieChart;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
@@ -19,6 +21,7 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import results.OverallResult;
 import results.SmellResult;
+import smells.AbstractCodeSmell;
 import smells.SmellDetector;
 import utils.Comments;
 import utils.HTMLUtil;
@@ -27,6 +30,8 @@ import utils.SyntaxHighlighter;
 import java.io.File;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public class UI implements Initializable {
@@ -41,11 +46,8 @@ public class UI implements Initializable {
     private AnchorPane pnHome, pnDetails, pnAnalysis, pnAbout;
 
     @FXML
-    private Label lblPage, lblMsg, lblSource, lblSmell, pieValue;
-
-    @FXML
-    private PieChart occurrencePieChart,severityPieChart;
-
+    private Label lblPage, lblMsg, lblSource, lblSmell, barValue, lblComment;
+    
     @FXML
     private ComboBox<String> comboSource,comboSmell;
 
@@ -58,31 +60,41 @@ public class UI implements Initializable {
     @FXML
     private StackPane codePane;
 
+    @FXML
+    private HBox severityBox,occurrenceBox;
+
+    private BarChart<?, ?> barSeverity, barOccurrence;
+
     private double xOffset = 0;
     private double yOffset = 0;
 
     private boolean isDirChosen = false;
     private boolean isNotified = false;
+    private boolean isCreated = false;
     private String projectDir;
     private SmellDetector smellDetector;
     private SyntaxHighlighter highlight;
     private OverallResult overallResult;
 
 
-    private final String[] defaultColors = {":#f3622d",
-            ":#fba71b",
-            ":#57b757",
-            ":#41a9c9",
-            ":#4258c9",
-            ":#9a42c8",
-            ":#c84164",
-            ":#888888"};
+    private HashMap<String, String> defaultColors = new HashMap<>(){
+        {
+            put("Long Methods","#f3622d");
+            put("Long Class","#fba71b");
+            put("Cyclomatic Complexity","#57b757");
+            put("Data Clumps","#41a9c9");
+            put("Duplicated Code","#4258c9");
+            put("Feature Envy","#9a42c8");
+            put("Heavy Commenting","#c84164");
+            put("Lazy Class","#888888");
+            put("Refused Bequest","#ff69b4");
+        }};
+    
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         highlight = new SyntaxHighlighter();
-
 
         makeStageDraggable();
         makeTabPaneListener();
@@ -138,6 +150,11 @@ public class UI implements Initializable {
                 smellDetector = new SmellDetector(projectDir);
                 smellDetector.detectSmells();
                 overallResult = new OverallResult(smellDetector.getSmellResults());
+
+                Alert notification = new Alert(Alert.AlertType.CONFIRMATION);
+                notification.setHeaderText("Project loaded.");
+                notification.setTitle("Message");
+                notification.showAndWait();
 
                 initializeComboBox();
 
@@ -209,44 +226,55 @@ public class UI implements Initializable {
         root.setOnDragDone((DragEvent mouseEvent) -> Main.stage.setOpacity(1.0f));
     }
 
-    private void makeSliceListener() {
-        DecimalFormat df=new DecimalFormat("0.00");
-
-        for (PieChart.Data d : occurrencePieChart.getData()) {
-            d.getNode().setOnMouseEntered((event) -> {
-                pieValue.setVisible(true);
-                pieValue.setText(df.format(d.getPieValue()) +"%");
-                int color = getColor(d.getNode());
-                pieValue.setStyle("-fx-text-fill " + defaultColors[color]+";");
-            });
-
-            d.getNode().setOnMouseExited((event) ->{
-                pieValue.setVisible(false);
-                pieValue.setText("");
-            });
-        }
-
-        for (PieChart.Data d : severityPieChart.getData()) {
-            d.getNode().setOnMouseEntered((event) -> {
-                pieValue.setVisible(true);
-                pieValue.setText(String.valueOf(df.format(d.getPieValue() - 1)));
-                int color = getColor(d.getNode());
-                pieValue.setStyle("-fx-text-fill " + defaultColors[color]+";");
-            });
-
-            d.getNode().setOnMouseExited((event) ->{
-                pieValue.setVisible(false);
-                pieValue.setText("");
-            });
-        }
-    }
-
-   private void makeTabPaneListener() {
+    private void makeTabPaneListener() {
         for(Tab currTab: tabAbout.getTabs()) {
             currTab.setOnSelectionChanged(e-> setHtmlContent(currTab));
         }
 
     }
+
+    private void makeSliceListener() {
+        DecimalFormat df = new DecimalFormat("0.00");
+
+        for (XYChart.Series<?, ?> series : barOccurrence.getData()) {
+            for (XYChart.Data data : series.getData()) {
+                data.getNode().setOnMouseEntered((event) -> {
+                    barValue.setVisible(true);
+                    barValue.setText(df.format(data.getYValue()) + "%");
+                    lblComment.setVisible(true);
+                    lblComment.setText(overallResult.getComments((String) data.getXValue()));
+                    barValue.setStyle("-fx-text-fill: " + defaultColors.get((String)data.getXValue()) + ";");
+                });
+
+                data.getNode().setOnMouseExited((event) -> {
+                    lblComment.setVisible(false);
+                    barValue.setVisible(false);
+                    barValue.setText("");
+                    lblComment.setText("");
+                });
+            }
+        }
+
+        for (XYChart.Series<?,?> series : barSeverity.getData()) {
+            for (XYChart.Data data : series.getData()) {
+                data.getNode().setOnMouseEntered((event) -> {
+                    barValue.setVisible(true);
+                    lblComment.setVisible(true);
+                    barValue.setText( df.format(data.getYValue()));
+                    lblComment.setText(overallResult.getComments((String) data.getXValue()));
+                    barValue.setStyle("-fx-text-fill: " + defaultColors.get((String)data.getXValue()) + ";");
+                });
+
+                data.getNode().setOnMouseExited((event) -> {
+                    lblComment.setVisible(false);
+                    barValue.setVisible(false);
+                    barValue.setText("");
+                    lblComment.setText("");
+                });
+            }
+        }
+    }
+
 
     /** Helper Functions **/
 
@@ -256,40 +284,72 @@ public class UI implements Initializable {
         return dc.showDialog(null); // returns selected directory
     }
 
-    private void createChart() {
+    private void setupChart(){
+        CategoryAxis xAxisOcc = new CategoryAxis();
+        CategoryAxis xAxisSev = new CategoryAxis();
+        NumberAxis yAxisOcc = new NumberAxis("Occurrence Percentage", 0, 100, 10);
+        NumberAxis yAxisSev = new NumberAxis("Severity Rating", 0, 3, 1);
+        barOccurrence = new BarChart<>(xAxisOcc, yAxisOcc);
+        barSeverity = new BarChart<>(xAxisSev, yAxisSev);
 
-        ObservableList<PieChart.Data> occurrenceData = initializeData();
-        ObservableList<PieChart.Data> severityData = initializeData();
+        Font font = new Font("Dubai", 6.5);
 
-        lblMsg.setVisible(false);
-        occurrencePieChart.setTitle("Average Occurrence of Smells");
-        severityPieChart.setTitle("Average Severity of Smells");
-        int SLICES = smellDetector.getSmells().length;
+        xAxisSev.setTickLabelFont(font);
+        xAxisOcc.setTickLabelFont(font);
 
+        xAxisOcc.setTickLabelRotation(25);
+        xAxisSev.setTickLabelRotation(25);
+
+        barOccurrence.setTitle("Average Occurrence of Smells");
+        barSeverity.setTitle("Average Severity of Smells");
+
+        barOccurrence.setLegendVisible(false);
+        barSeverity.setLegendVisible(false);
+    }
+
+    private void fillChart(){
+
+        XYChart.Series severityData = new XYChart.Series<>();
+        XYChart.Series occurrenceData = new XYChart.Series<>();
+
+        int SMELLS = smellDetector.getSmells().length;
         String smell;
         double average;
+        XYChart.Data<String, Number> dataOcc;
+        XYChart.Data<String, Number> dataSev;
 
-        for(int i =0;i<SLICES ;i++)
-        {
+        for (int i = 0; i < SMELLS; i++) {
             smell = smellDetector.getSmells()[i].getSmellName();
 
             average = overallResult.getOverallOccurrences().get(smell);
-            addData(smell,average, occurrenceData);
-            System.out.println(smell+ " " + average);
+            if (average == 0) { // ensures that smell is somewhat visible in chart
+                average = 0.25;
+            }
+
+            dataOcc = new XYChart.Data<>(smell, average);
+            addData(occurrenceData, dataOcc);
 
             average = overallResult.getOverallSeverities().get(smell);
-            addData(smell,average+1, severityData);
-            System.out.println(smell+ " " + average);
+            if (average == 0) { // ensures that smell is somewhat visible in chart
+                average = 0.01;
+            }
+            dataSev = new XYChart.Data<>(smell, average);
+            addData(severityData, dataSev);
+                
+
         }
-        System.out.println();
 
-        severityPieChart.setData(severityData);
-        occurrencePieChart.setData(occurrenceData);
-        severityPieChart.setVisible(true);
-        occurrencePieChart.setVisible(true);
+        barOccurrence.getData().addAll(occurrenceData);
+        barSeverity.getData().addAll(severityData);
+
+        occurrenceBox.getChildren().add(barOccurrence);
+        severityBox.getChildren().add(barSeverity);
+
+        isCreated = true;
+
         makeSliceListener();
-    }
 
+    }
 
     private void hideAllPanes() {
         pnHome.setVisible(false);
@@ -300,11 +360,15 @@ public class UI implements Initializable {
 
     private void reset() {
 
-        // Clearing pie charts
-        occurrencePieChart.getData().clear();
-        severityPieChart.getData().clear();
-        occurrencePieChart.setVisible(false);
-        severityPieChart.setVisible(false);
+        // Clearing data
+        if(isCreated) {
+            severityBox.getChildren().remove(0);
+            occurrenceBox.getChildren().remove(0);
+        }
+        barOccurrence.getData().clear();
+        barSeverity.getData().clear();
+        barOccurrence.setVisible(false);
+        barSeverity.setVisible(false);
 
         // Reset drop down menus
         comboSmell.getItems().clear();
@@ -342,6 +406,7 @@ public class UI implements Initializable {
         // Reset variables
         projectDir = null;
         isDirChosen = false;
+        isCreated = false;
 
     }
 
@@ -357,18 +422,22 @@ public class UI implements Initializable {
         pnAnalysis.toFront();
         pnAnalysis.setVisible(true);
         lblPage.setText("Analysis");
-        pieValue.setVisible(false);
+        barValue.setVisible(false);
+        lblComment.setVisible(false);
         if(!isDirChosen){
             lblMsg.setText("Nothing to display");
             lblMsg.setVisible(true);
         }else{
             lblMsg.setVisible(false);
-            createChart();
-            occurrencePieChart.setVisible(true);
-            severityPieChart.setVisible(true);
+            if(!isCreated) {
+                setupChart();
+                fillChart();
+            }
+            barSeverity.setVisible(true);
+            barOccurrence.setVisible(true);
             if(!isNotified) {
                 Alert notification = new Alert(Alert.AlertType.INFORMATION);
-                notification.setHeaderText("Hover cursor over slices to see their values!");
+                notification.setHeaderText("Hover cursor over bars to see their values!");
                 notification.setTitle("Hint");
                 notification.showAndWait();
                 isNotified = true;
@@ -392,30 +461,14 @@ public class UI implements Initializable {
         setHtmlContent(tabAbout.getTabs().get(0));
     }
 
-    private void addData(String smell, double average, ObservableList<PieChart.Data> pieData ) {
-        for(PieChart.Data d: pieData)
-        {
-            if(d.getName().equals(smell))
-            {
-                d.setPieValue(average);
-                return;
-            }
-        }
-
-        //If smell doesn't exist
-        pieData.add(new PieChart.Data(smell,average));
-    }
-
     private void initializeComboBox() {
         comboSource.getItems().addAll(smellDetector.getSmellResults().get(0).getSeverityPerFile().keySet());
-        comboSmell.getItems().addAll(smellDetector.getSmells()[0].getSmellName(),
-                smellDetector.getSmells()[1].getSmellName(),
-                smellDetector.getSmells()[2].getSmellName(),
-                smellDetector.getSmells()[3].getSmellName(),
-                smellDetector.getSmells()[4].getSmellName(),
-                smellDetector.getSmells()[5].getSmellName(),
-                smellDetector.getSmells()[6].getSmellName(),
-                smellDetector.getSmells()[7].getSmellName());
+        ArrayList<String> smellNames = new ArrayList<>();
+        for(AbstractCodeSmell smell: smellDetector.getSmells())
+        {
+            smellNames.add(smell.getSmellName());
+        }
+        comboSmell.getItems().addAll(smellNames);
 
         Callback<ListView<String>, ListCell<String>> cellFactory = new Callback<ListView<String>, ListCell<String>>() {
             @Override
@@ -455,33 +508,23 @@ public class UI implements Initializable {
         comboSource.setCellFactory(cellFactory);
         comboSmell.setCellFactory(cellFactory);
     }
-
-    private ObservableList<PieChart.Data> initializeData() {
-        return FXCollections.observableArrayList(
-                new PieChart.Data(smellDetector.getSmells()[0].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[1].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[2].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[3].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[4].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[5].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[6].getSmellName(), 0),
-                new PieChart.Data(smellDetector.getSmells()[7].getSmellName(), 0));
+    
+    private void addData(XYChart.Series series, XYChart.Data<String, Number> data){
+        series.getData().add(data);
+        data.nodeProperty().addListener((ov, oldNode, newNode) -> {
+            newNode.setStyle("-fx-bar-fill: " + defaultColors.get(data.getXValue()) );
+        });
+        System.out.println(data.getXValue() + " " + data.getYValue());
     }
 
-    private int getColor(Node node) {
-        return Integer.parseInt(node.getStyleClass().get(2).substring(node.getStyleClass().get(2).length()-1)); // extracts default color index
-    }
-
-   private void setHtmlContent(Tab currTab){
+    private void setHtmlContent(Tab currTab){
         WebView webView = new WebView();
         WebEngine webEngine = webView.getEngine();
-       String tabName = currTab.getText();
-       webEngine.loadContent(HTMLUtil.getHTMLUtil().getHtml(tabName));
-       webEngine.setUserStyleSheetLocation(getClass().getResource("tab-content.css").toString());
-       currTab.setContent(webView);
+        String tabName = currTab.getText();
+        webEngine.loadContent(HTMLUtil.getHTMLUtil().getHtml(tabName));
+        webEngine.setUserStyleSheetLocation(getClass().getResource("tab-content.css").toString());
+        currTab.setContent(webView);
 
-   }
-
-
+    }
 
 }

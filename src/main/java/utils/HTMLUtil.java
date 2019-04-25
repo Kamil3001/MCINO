@@ -1,11 +1,9 @@
 package utils;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class HTMLUtil {
 
@@ -25,24 +23,25 @@ public class HTMLUtil {
 
         }};
 
+
+
     private HTMLUtil(){
     }
 
-    private String extractHTML(File html){
+    private String extractHTML(File html) {
+
         StringBuilder htmlBuilder = new StringBuilder();
-        try
-        {
-            BufferedReader br = new BufferedReader(new FileReader(html));
-            String currLine;
-            while ((currLine = br.readLine()) != null)
-            {
-                htmlBuilder.append(currLine).append("\n");
+        Scanner sc = null;
+        try {
+            sc = new Scanner(html);
+            while(sc.hasNextLine()){
+                htmlBuilder.append(sc.nextLine()).append("\n");
             }
-        }
-        catch (IOException e)
-        {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+
         return htmlBuilder.toString();
     }
 

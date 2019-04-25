@@ -5,11 +5,10 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.comments.Comment;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import utils.Comments;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class FileMetricsTest {
 
