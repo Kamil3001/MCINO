@@ -15,7 +15,7 @@ public class LongMethodsSmell extends AbstractCodeSmell {
 
         for(Map.Entry<String, MethodMetrics> entry : metrics.getMethodsMetrics().entrySet()){
             int methodLength = entry.getValue().getNumOfLines();
-            if(methodLength > 30){
+            if(methodLength > 40){
                 occurrences.add(new Occurrence(entry.getValue().getStartLine(), entry.getValue().getEndLine()));
             }
 
@@ -23,11 +23,11 @@ public class LongMethodsSmell extends AbstractCodeSmell {
         }
         avgMethodLength = (metrics.getNumOfMethods() > 0) ? avgMethodLength/metrics.getNumOfMethods() : 0;
 
-        if(avgMethodLength > 50)
+        if(avgMethodLength > 80)
             severity = 3;
-        else if(avgMethodLength > 40)
+        else if(avgMethodLength > 60)
             severity = 2;
-        else if(avgMethodLength > 30)
+        else if(avgMethodLength > 40 || !occurrences.isEmpty())
             severity = 1;
     }
 
