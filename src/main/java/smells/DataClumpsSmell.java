@@ -15,6 +15,7 @@ public class DataClumpsSmell extends AbstractCodeSmell {
 
     @Override
     public void detectSmell(FileMetrics metrics) {
+        severity = 0;
         occurrences = new ArrayList<>();
 
         //this is a hard smell to detect accurately because of the potential variety in parameters passed in

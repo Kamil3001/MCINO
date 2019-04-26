@@ -12,6 +12,7 @@ public class LongMethodsSmell extends AbstractCodeSmell {
 
     @Override
     public void detectSmell(FileMetrics metrics) {
+        severity = 0;
         occurrences = new ArrayList<>();
         float avgMethodLength = 0;
 

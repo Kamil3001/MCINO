@@ -19,6 +19,9 @@ import javafx.util.Callback;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.model.Paragraph;
+import org.fxmisc.richtext.model.StyleSpansBuilder;
+import results.Occurrence;
 import results.OverallResult;
 import results.SmellResult;
 import smells.AbstractCodeSmell;
@@ -30,9 +33,7 @@ import utils.SyntaxHighlighter;
 import java.io.File;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class UI implements Initializable {
 
@@ -149,6 +150,7 @@ public class UI implements Initializable {
                 projectDir = dir.getAbsolutePath();
                 smellDetector = new SmellDetector(projectDir);
                 smellDetector.detectSmells();
+
                 overallResult = new OverallResult(smellDetector.getSmellResults());
 
                 Alert notification = new Alert(Alert.AlertType.CONFIRMATION);
@@ -174,20 +176,36 @@ public class UI implements Initializable {
             if(comboSource.getSelectionModel().getSelectedItem() != null && comboSmell.getSelectionModel().getSelectedItem() != null) {
                 codePane.getChildren().clear();
                 CodeArea codeSource = new CodeArea();
-                codeSource.getStylesheets().add(getClass().getResource("java-keywords.css").toExternalForm());
+                codeSource.getStylesheets().add(getClass().getResource("highlight.css").toExternalForm());
                 codeSource.setParagraphGraphicFactory(LineNumberFactory.get(codeSource));
                 codeSource.richChanges()
                         .filter(ch -> !ch.getInserted().equals(ch.getRemoved()))
                         .subscribe(change -> codeSource.setStyleSpans(0, highlight.computeHighlighting(codeSource.getText())));
                 codeSource.replaceText(0, 0, smellDetector.getSourceFiles().get(comboSource.getSelectionModel().getSelectedItem()));
                 codeSource.setEditable(false);
+
+
+                List<Occurrence> occurrence = smellDetector.getSmellResults().get(smell).getOccurrencesPerFile().get(file);
+                if(occurrence!=null) {
+                    for (Occurrence occ : occurrence) {
+                        //System.out.println(occ.getStartLine() + " " +occ.getEndLine());
+                        codeSource.setParagraphStyle(occ.getStartLine()-1, Collections.singleton("smell"));
+                        for(int i =occ.getStartLine()-1;i < occ.getEndLine();i++)
+                        {
+                            codeSource.setParagraphStyle(i,Collections.singleton("smell"));
+                        }
+                        //System.out.println(codeSource.getText(occ.getStartLine(),0,occ.getEndLine(),occ.getEndLine()+1));
+
+                    }
+                }
                 codePane.getChildren().add(new VirtualizedScrollPane<>(codeSource));
                 lblSource.setText(file);
                 int severity = 0;
-                for(SmellResult s: smellDetector.getSmellResults())
+                for(String sm: smellDetector.getSmellResults().keySet())
                 {
-                    if(s.getSmellName().equals(smell)){
-                        severity= s.getSeverityPerFile().get(file);
+                    SmellResult sr = smellDetector.getSmellResults().get(sm);
+                    if(smellDetector.getSmellResults().get(sm).getSmellName().equals(smell)){
+                        severity= sr.getSeverityPerFile().get(file);
                     }
                 }
                 lblSmell.setText(Comments.getCommentsClass().getComment(smell, severity) +" \nSeverity is " + severity);
@@ -233,14 +251,14 @@ public class UI implements Initializable {
 
     }
 
-    private void makeSliceListener() {
+    private void makeBarListener(BarChart<?,?> chart) {
         DecimalFormat df = new DecimalFormat("0.00");
 
-        for (XYChart.Series<?, ?> series : barOccurrence.getData()) {
+        for (XYChart.Series<?, ?> series : chart.getData()) {
             for (XYChart.Data data : series.getData()) {
                 data.getNode().setOnMouseEntered((event) -> {
                     barValue.setVisible(true);
-                    barValue.setText(df.format(data.getYValue()) + "%");
+                    barValue.setText(df.format(data.getYValue()));
                     lblComment.setVisible(true);
                     lblComment.setText(overallResult.getComments((String) data.getXValue()));
                     barValue.setStyle("-fx-text-fill: " + defaultColors.get((String)data.getXValue()) + ";");
@@ -255,24 +273,6 @@ public class UI implements Initializable {
             }
         }
 
-        for (XYChart.Series<?,?> series : barSeverity.getData()) {
-            for (XYChart.Data data : series.getData()) {
-                data.getNode().setOnMouseEntered((event) -> {
-                    barValue.setVisible(true);
-                    lblComment.setVisible(true);
-                    barValue.setText( df.format(data.getYValue()));
-                    lblComment.setText(overallResult.getComments((String) data.getXValue()));
-                    barValue.setStyle("-fx-text-fill: " + defaultColors.get((String)data.getXValue()) + ";");
-                });
-
-                data.getNode().setOnMouseExited((event) -> {
-                    lblComment.setVisible(false);
-                    barValue.setVisible(false);
-                    barValue.setText("");
-                    lblComment.setText("");
-                });
-            }
-        }
     }
 
 
@@ -287,12 +287,14 @@ public class UI implements Initializable {
     private void setupChart(){
         CategoryAxis xAxisOcc = new CategoryAxis();
         CategoryAxis xAxisSev = new CategoryAxis();
-        NumberAxis yAxisOcc = new NumberAxis("Occurrence Percentage", 0, 100, 10);
+        NumberAxis yAxisOcc = new NumberAxis();
         NumberAxis yAxisSev = new NumberAxis("Severity Rating", 0, 3, 1);
         barOccurrence = new BarChart<>(xAxisOcc, yAxisOcc);
         barSeverity = new BarChart<>(xAxisSev, yAxisSev);
 
         Font font = new Font("Dubai", 6.5);
+
+        yAxisOcc.setLabel("Number of Occurrences");
 
         xAxisSev.setTickLabelFont(font);
         xAxisOcc.setTickLabelFont(font);
@@ -300,8 +302,8 @@ public class UI implements Initializable {
         xAxisOcc.setTickLabelRotation(25);
         xAxisSev.setTickLabelRotation(25);
 
-        barOccurrence.setTitle("Average Occurrence of Smells");
-        barSeverity.setTitle("Average Severity of Smells");
+        barOccurrence.setTitle("Average Occurrence of Smells Per File");
+        barSeverity.setTitle("Average Severity of Smells Across Files");
 
         barOccurrence.setLegendVisible(false);
         barSeverity.setLegendVisible(false);
@@ -322,17 +324,10 @@ public class UI implements Initializable {
             smell = smellDetector.getSmells()[i].getSmellName();
 
             average = overallResult.getOverallOccurrences().get(smell);
-            if (average == 0) { // ensures that smell is somewhat visible in chart
-                average = 0.25;
-            }
-
             dataOcc = new XYChart.Data<>(smell, average);
             addData(occurrenceData, dataOcc);
 
             average = overallResult.getOverallSeverities().get(smell);
-            if (average == 0) { // ensures that smell is somewhat visible in chart
-                average = 0.01;
-            }
             dataSev = new XYChart.Data<>(smell, average);
             addData(severityData, dataSev);
                 
@@ -347,7 +342,8 @@ public class UI implements Initializable {
 
         isCreated = true;
 
-        makeSliceListener();
+        makeBarListener(barOccurrence);
+        makeBarListener(barSeverity);
 
     }
 
@@ -364,11 +360,13 @@ public class UI implements Initializable {
         if(isCreated) {
             severityBox.getChildren().remove(0);
             occurrenceBox.getChildren().remove(0);
+            barOccurrence.getData().clear();
+            barSeverity.getData().clear();
+            barOccurrence.setVisible(false);
+            barSeverity.setVisible(false);
         }
-        barOccurrence.getData().clear();
-        barSeverity.getData().clear();
-        barOccurrence.setVisible(false);
-        barSeverity.setVisible(false);
+
+
 
         // Reset drop down menus
         comboSmell.getItems().clear();
@@ -450,7 +448,6 @@ public class UI implements Initializable {
         pnDetails.toFront();
         pnDetails.setVisible(true);
         lblPage.setText("Details");
-
     }
 
     private void openAbout() {
@@ -462,7 +459,7 @@ public class UI implements Initializable {
     }
 
     private void initializeComboBox() {
-        comboSource.getItems().addAll(smellDetector.getSmellResults().get(0).getSeverityPerFile().keySet());
+        comboSource.getItems().addAll(smellDetector.getSmellResults().get("Lazy Class").getSeverityPerFile().keySet());
         ArrayList<String> smellNames = new ArrayList<>();
         for(AbstractCodeSmell smell: smellDetector.getSmells())
         {

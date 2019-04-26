@@ -49,3 +49,7 @@
     -fx-text-fill:#7C8184;
     -fx-padding-left: 3px;
 }
+
+.smell{
+    -fx-background-color: rgba(38, 52, 108, 1);
+}

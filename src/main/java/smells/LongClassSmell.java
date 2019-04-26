@@ -2,11 +2,15 @@ package smells;
 
 import metrics.FileMetrics;
 
+import java.util.ArrayList;
+
 public class LongClassSmell extends AbstractCodeSmell {
     private final static String smellName = "Long Class";
 
     @Override
     public void detectSmell(FileMetrics metrics) {
+        severity = 0;
+        occurrences = new ArrayList<>();
         int mainClassLength = metrics.getClassLengths().get(0);
 
         if(mainClassLength > 1200)

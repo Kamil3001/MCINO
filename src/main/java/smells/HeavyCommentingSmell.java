@@ -3,6 +3,8 @@ package smells;
 
 import metrics.FileMetrics;
 
+import java.util.ArrayList;
+
 //Too many comments make the code hard to read, better practice to have code that is self explanatory where possible
 public class HeavyCommentingSmell extends AbstractCodeSmell{
     private final static String smellName = "Heavy Commenting";
@@ -12,7 +14,8 @@ public class HeavyCommentingSmell extends AbstractCodeSmell{
 
     @Override
     public void detectSmell(FileMetrics metrics) {
-
+        severity = 0;
+        occurrences = new ArrayList<>();
         /*assuming suggested length of method is 30, we shouldn't have more than half of each one commented
         also instead of commenting every line, user should comment stumps of code if the stump needs it*/
 

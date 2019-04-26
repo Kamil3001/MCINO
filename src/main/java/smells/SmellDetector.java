@@ -5,7 +5,6 @@ import metrics.FileMetrics;
 import results.SmellResult;
 import utils.Setup;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SmellDetector {
@@ -13,7 +12,7 @@ public class SmellDetector {
     private FileMetrics[] metrics;
     private CompilationUnit[] CUs;
     private AbstractCodeSmell[] smells;
-    private ArrayList<SmellResult> smellResults;
+    private HashMap<String, SmellResult> smellResults;
     private HashMap<String,String> sourceFiles;
 
     public SmellDetector(String dirPath){
@@ -46,7 +45,7 @@ public class SmellDetector {
     }
 
     public void detectSmells() {
-        smellResults = new ArrayList<>();
+        smellResults = new HashMap<>();
         for(AbstractCodeSmell smell : smells){
             SmellResult result = new SmellResult(smell.getSmellName());
 
@@ -54,12 +53,12 @@ public class SmellDetector {
                 smell.detectSmell(fm);
                 result.addOccurrences(fm.getClassNames().get(0), smell.getOccurrences());
                 result.addSeverity(fm.getClassNames().get(0), smell.getSeverity());
-                smellResults.add(result);
+                smellResults.put(smell.getSmellName(),result);
             }
         }
     }
 
-    public ArrayList<SmellResult> getSmellResults(){
+    public HashMap<String, SmellResult> getSmellResults(){
         return smellResults;
     }
 

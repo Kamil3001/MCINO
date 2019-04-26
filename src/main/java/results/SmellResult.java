@@ -18,7 +18,7 @@ public class SmellResult {
     private String smellName;
     private int totalSeverity = 0; //default value for severity of the smell in entire directory
     private int totalOccurrences = 0;
-    private HashMap<String, List<Occurrence>> occurrencesPerFile; //stored as line numbers rather than entire strings (null for smells like cyclomatic complexity)
+    private HashMap<String, List<Occurrence>> occurrencesPerFile;
     private HashMap<String, Integer> severityPerFile;
 
     public SmellResult(String smellName){
@@ -68,11 +68,12 @@ public class SmellResult {
     }
 
     public double getAverageSeverity() {
-        return Math.round((totalSeverity*1.0) / severityPerFile.size());
+        return (totalSeverity*1.0) / severityPerFile.size();
     }
 
     public double getAverageOccurrences() {
-        return Math.round((totalOccurrences*1.0) / occurrencesPerFile.size());
+        System.out.println(smellName + totalOccurrences + " " + occurrencesPerFile.size());
+        return (totalOccurrences*1.0) / occurrencesPerFile.size();
     }
 
     public HashMap<String, Integer> getSeverityPerFile() {

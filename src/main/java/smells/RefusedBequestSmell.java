@@ -28,6 +28,7 @@ public class RefusedBequestSmell extends AbstractCodeSmell {
 
     @Override
     public void detectSmell(FileMetrics metrics) {
+        severity = 0;
         occurrences = new ArrayList<>();
         /*
         if class doesn't inherit from anything refused bequest isn't a problem
@@ -51,6 +52,7 @@ public class RefusedBequestSmell extends AbstractCodeSmell {
                     System.out.println(metrics.getClassNames().get(0));
                     System.out.println(entry.getValue().getStartLine());
                     occurrences.add(new Occurrence(entry.getValue().getStartLine(), entry.getValue().getEndLine())); //otherwise assume method is unused
+                    severity=1;
                 }
             }
 

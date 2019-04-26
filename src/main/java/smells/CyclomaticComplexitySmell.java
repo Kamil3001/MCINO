@@ -14,6 +14,7 @@ public class CyclomaticComplexitySmell extends AbstractCodeSmell {
 
     @Override
     public void detectSmell(FileMetrics metrics) {
+        severity = 0;
         occurrences = new ArrayList<>();
         //the visitor does the counting for us
         CyclomaticComplexityVisitor ccv;

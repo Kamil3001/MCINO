@@ -13,6 +13,7 @@ public class FeatureEnvySmell extends AbstractCodeSmell{
 
     @Override
     public void detectSmell(FileMetrics metrics) {
+        severity = 0;
         occurrences = new ArrayList<>();
         int numOfProblematicMethods = 0;
         for(Map.Entry<String, MethodMetrics> entry : metrics.getMethodsMetrics().entrySet()){
