@@ -4,6 +4,7 @@ import metrics.FileMetrics;
 import metrics.MethodMetrics;
 import results.Occurrence;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class LongMethodsSmell extends AbstractCodeSmell {
@@ -11,6 +12,7 @@ public class LongMethodsSmell extends AbstractCodeSmell {
 
     @Override
     public void detectSmell(FileMetrics metrics) {
+        occurrences = new ArrayList<>();
         float avgMethodLength = 0;
 
         for(Map.Entry<String, MethodMetrics> entry : metrics.getMethodsMetrics().entrySet()){

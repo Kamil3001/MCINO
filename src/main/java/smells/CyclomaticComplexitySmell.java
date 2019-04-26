@@ -5,6 +5,7 @@ import metrics.MethodMetrics;
 import results.Occurrence;
 import visitors.CyclomaticComplexityVisitor;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 //count num of ifs, else ifs, switch cases and loops
@@ -13,6 +14,7 @@ public class CyclomaticComplexitySmell extends AbstractCodeSmell {
 
     @Override
     public void detectSmell(FileMetrics metrics) {
+        occurrences = new ArrayList<>();
         //the visitor does the counting for us
         CyclomaticComplexityVisitor ccv;
         float avgCC = 0;
@@ -30,7 +32,7 @@ public class CyclomaticComplexitySmell extends AbstractCodeSmell {
             severity = 3;
         else if(avgCC > 20) //medium
             severity = 2;
-        else if(avgCC > 10) //low
+        else if(avgCC > 10 || !occurrences.isEmpty()) //low
             severity = 1;
     }
 

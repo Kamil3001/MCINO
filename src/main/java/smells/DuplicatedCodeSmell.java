@@ -25,6 +25,7 @@ public class DuplicatedCodeSmell extends AbstractCodeSmell {
 
     @Override
     public void detectSmell(FileMetrics metrics) {
+        occurrences = new ArrayList<>();
         if(getFieldsAndMethods(metrics)) checkMethods();
 
     }

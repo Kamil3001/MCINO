@@ -46,9 +46,7 @@ public class OverallResult {
 
         String result = smellName + " smell has an average severity rating of " + avgSev +
                 " and average number of occurrences per file is " + avgOcc + "%\n";
-
-        //todo create a text file with solutions for different smells and build the string using the relevant line in the text
-        // use regex to find the relevant comments
+        
         return result;
     }
 

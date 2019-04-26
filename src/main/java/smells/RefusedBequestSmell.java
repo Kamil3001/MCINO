@@ -9,6 +9,7 @@ import metrics.MethodMetrics;
 import results.Occurrence;
 import visitors.MethodCallVisitor;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 
@@ -27,6 +28,7 @@ public class RefusedBequestSmell extends AbstractCodeSmell {
 
     @Override
     public void detectSmell(FileMetrics metrics) {
+        occurrences = new ArrayList<>();
         /*
         if class doesn't inherit from anything refused bequest isn't a problem
         and if a class extends an abstract class or implements interfaces it is assumed that the goal is polymorphism and thus
@@ -46,6 +48,8 @@ public class RefusedBequestSmell extends AbstractCodeSmell {
                     someMethodsUsed = true;
                 }
                 else{
+                    System.out.println(metrics.getClassNames().get(0));
+                    System.out.println(entry.getValue().getStartLine());
                     occurrences.add(new Occurrence(entry.getValue().getStartLine(), entry.getValue().getEndLine())); //otherwise assume method is unused
                 }
             }

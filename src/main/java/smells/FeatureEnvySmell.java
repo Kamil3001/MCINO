@@ -5,6 +5,7 @@ import metrics.MethodMetrics;
 import results.Occurrence;
 import visitors.FeatureEnvyVisitor;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class FeatureEnvySmell extends AbstractCodeSmell{
@@ -12,6 +13,7 @@ public class FeatureEnvySmell extends AbstractCodeSmell{
 
     @Override
     public void detectSmell(FileMetrics metrics) {
+        occurrences = new ArrayList<>();
         int numOfProblematicMethods = 0;
         for(Map.Entry<String, MethodMetrics> entry : metrics.getMethodsMetrics().entrySet()){
             FeatureEnvyVisitor v = new FeatureEnvyVisitor(entry.getValue().getMethodDeclaration());

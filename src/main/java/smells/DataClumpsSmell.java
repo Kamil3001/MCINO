@@ -13,12 +13,9 @@ import java.util.Optional;
 public class DataClumpsSmell extends AbstractCodeSmell {
     private final static String smellName = "Data Clumps";
 
-    DataClumpsSmell(){
-        occurrences = new ArrayList<>();
-    }
-
     @Override
     public void detectSmell(FileMetrics metrics) {
+        occurrences = new ArrayList<>();
 
         //this is a hard smell to detect accurately because of the potential variety in parameters passed in
         //Workaround: Assume that high number of parameters to a method is a sign data clumps are possible

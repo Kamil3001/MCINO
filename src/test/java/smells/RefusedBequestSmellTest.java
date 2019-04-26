@@ -6,6 +6,8 @@ import static org.junit.Assert.*;
 
 public class RefusedBequestSmellTest {
 
+    private static RefusedBequestSmell rbs;
+
     @Test
     public void getSeverity() {
     }
@@ -15,10 +17,6 @@ public class RefusedBequestSmellTest {
     }
 
     @Test
-    public void detectSmell() {
-    }
-
-    @Test
-    public void getSmellName() {
+    public void getSmellName() {;
     }
 }
