@@ -75,5 +75,35 @@
     -fx-highlight-text-fill: white;
     -fx-border-radius: 10 10 0 0;
     -fx-background-radius: 10 10 0 0;
+}
 
+.chart-plot-background {
+    -fx-background-color:transparent;
+}
+
+.chart{
+    -fx-background-color: #333645;
+}
+.axis{
+    -fx-tick-label-fill: white;
+    -fx-tick-length: 0;
+    -fx-stroke: white;
+}
+.axis-label {
+    -fx-text-fill: #ffffff;
+}
+.chart-title {
+    -fx-text-fill: #ffffff;
+}
+.chart-vertical-zero-line {
+    -fx-stroke: white;
+}
+.chart-horizontal-zero-line {
+    -fx-stroke: white;
+}
+.chart-vertical-grid-lines {
+    -fx-stroke: #7C8184;
+}
+.chart-horizontal-grid-lines {
+    -fx-stroke: #7C8184;
 }

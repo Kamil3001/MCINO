@@ -19,8 +19,6 @@ import javafx.util.Callback;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
-import org.fxmisc.richtext.model.Paragraph;
-import org.fxmisc.richtext.model.StyleSpansBuilder;
 import results.Occurrence;
 import results.OverallResult;
 import results.SmellResult;
@@ -337,6 +335,9 @@ public class UI implements Initializable {
         barOccurrence.getData().addAll(occurrenceData);
         barSeverity.getData().addAll(severityData);
 
+     ;
+
+
         occurrenceBox.getChildren().add(barOccurrence);
         severityBox.getChildren().add(barSeverity);
 
@@ -467,7 +468,7 @@ public class UI implements Initializable {
         }
         comboSmell.getItems().addAll(smellNames);
 
-        Callback<ListView<String>, ListCell<String>> cellFactory = new Callback<ListView<String>, ListCell<String>>() {
+        Callback<ListView<String>, ListCell<String>> cellFactory = new Callback<>() {
             @Override
             public ListCell<String> call(ListView<String> arg0) {
                 ListCell<String> cell = new ListCell<String>() {
@@ -509,7 +510,7 @@ public class UI implements Initializable {
     private void addData(XYChart.Series series, XYChart.Data<String, Number> data){
         series.getData().add(data);
         data.nodeProperty().addListener((ov, oldNode, newNode) -> {
-            newNode.setStyle("-fx-bar-fill: " + defaultColors.get(data.getXValue()) );
+            newNode.setStyle("-fx-bar-fill: " + defaultColors.get(data.getXValue()));
         });
         System.out.println(data.getXValue() + " " + data.getYValue());
     }
@@ -521,7 +522,5 @@ public class UI implements Initializable {
         webEngine.loadContent(HTMLUtil.getHTMLUtil().getHtml(tabName));
         webEngine.setUserStyleSheetLocation(getClass().getResource("tab-content.css").toString());
         currTab.setContent(webView);
-
     }
-
 }
