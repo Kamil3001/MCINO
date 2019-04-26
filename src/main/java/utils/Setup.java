@@ -118,10 +118,6 @@ public class Setup {
 
     }
 
-    public File[] filesAccessor(){
-        return this.files;
-    }
-
     public HashMap<String, String> getSourceFiles(){
         return this.javaFiles;
     }

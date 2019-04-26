@@ -40,22 +40,12 @@ public class OverallResult {
         return avgSmellOccurrences;
     }
 
-    public String getAvgSeverityComment(double avgSeverity){
-        int i = (int)Math.round(avgSeverity);
-        return resultCommentsforAvgSeverity[i];
-    }
-
-    public String getAvgOccurrencesComment(String smellName){
-        double avg = avgSmellOccurrences.get(smellName);
-        return "The average occurrence of the " + smellName + " smell is " + avg + ".";
-    }
-
     public String getComments(String smellName){
         double avgSev = avgSmellSeverities.get(smellName);
         double avgOcc = avgSmellOccurrences.get(smellName);
 
-        String result = smellName + " smell has an average severity rating of: " + avgSev +
-                " and average number of occurrences per file is: " + avgOcc + ".\n";
+        String result = smellName + " smell has an average severity rating of " + avgSev +
+                " and average number of occurrences per file is " + avgOcc + "%\n";
 
         //todo create a text file with solutions for different smells and build the string using the relevant line in the text
         // use regex to find the relevant comments

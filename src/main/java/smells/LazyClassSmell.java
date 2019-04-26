@@ -76,7 +76,6 @@ public class LazyClassSmell extends AbstractCodeSmell {
         severity = 0;
         for(String className : metrics.getClassNames()){
             if(lazyClasses.contains(className)){
-                System.out.println("1" + className);
                 severity = 3;
                 break;
             }

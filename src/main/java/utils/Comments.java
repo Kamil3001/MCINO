@@ -6,12 +6,21 @@ public class Comments {
 
     private static Comments cache = null;
     private HashMap<String, String[]>  comments = new HashMap<>() {{
-        put("Bloated Code", new String[]{
-                "Code not bloated. Nothing to be concerned about here. ",
-                "Code showing signs of bloating. A little concerning. ",
-                "Code has a substantial amount of bloating. Very concerning, should fix as soon as possible. ",
-                "Code completely bloated (may see a doctor). Area red, must be fixed immediately!"
+
+        put("Long Class", new String[]{
+                "Class not long. Nothing to be concerned about here. ",
+                "Class is getting longer. A little concerning. ",
+                "Class is substantially long. Very concerning, should fix as soon as possible. ",
+                "Class is very long. Area red, must be fixed immediately!"
         });
+
+        put("Long Methods", new String[]{
+                "Method not long. Nothing to be concerned about here. ",
+                "Method is getting longer. A little concerning. ",
+                "Method is substantially long. Very concerning, should fix as soon as possible. ",
+                "Method is very long. Area red, must be fixed immediately!"
+        });
+
         put("Cyclomatic Complexity", new String[]{
                 "This file has a low Cyclomatic complexity. All clear. ",
                 "Complexity is increasing. Keep a close eye here.",
@@ -66,6 +75,7 @@ public class Comments {
     }
 
     public String getComment(String smellName, int severity){
+        System.out.println(smellName + " " + severity);
         return comments.get(smellName)[severity];
     }
 
