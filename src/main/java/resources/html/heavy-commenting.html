@@ -6,19 +6,18 @@
 </head>
 <body>
 <h2>What is a Heavy Commenting smell?</h2>
-When your program is filled with explanatory comments
+When your program is filled with self explanatory comments.
 
-<h2>How to treat?</h2>
+<h2>How to treat the heavy commenting smell?</h2>
 <ul>
-    <li>If a comment is intended to explain a complex expression, the expression should be split into understandable subexpressions using Extract Variable.</li>
-    <li>If a comment explains a section of code, this section can be turned into a separate method via Extract Method. The name of the new method can be taken from the comment text itself, most likely.</li>
-    <li>If a method has already been extracted, but comments are still necessary to explain what the method does, give the method a self-explanatory name. Use Rename Method for this.</li>
-    <li>If you need to assert rules about a state that’s necessary for the system to work, use Introduce Assertion.</li>
+    <li>Use Extract Variable to split comments that describe complex expressions into subexpressions.</li>
+    <li>Instead of explaining a method, give it a self explanatory name you can use Rename Method for this.</li>
+    <li>To assert rules about a certain state that is needed for the system to work use Introduce Assertion.</li>
 </ul>
 
-<h2>Why bother?</h2>
+<h2>Why do we bother fixing this?</h2>
 <ul>
-    <li>Code becomes more intuitive and obvious.</li>
+    <li>Code becomes more obvious and easy to understand.</li>
 </ul>
 </body>
 </html>
