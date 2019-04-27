@@ -7,6 +7,7 @@ import results.Occurrence;
 import java.util.ArrayList;
 import java.util.Map;
 
+//detects overly long methods and judges severity based off of the average method length
 public class LongMethodsSmell extends AbstractCodeSmell {
     private final static String smellName = "Long Methods";
 
@@ -30,7 +31,7 @@ public class LongMethodsSmell extends AbstractCodeSmell {
             severity = 3;
         else if(avgMethodLength > 60)
             severity = 2;
-        else if(avgMethodLength > 40 || !occurrences.isEmpty())
+        else if(!occurrences.isEmpty())
             severity = 1;
     }
 

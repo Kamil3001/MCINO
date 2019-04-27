@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
+/* Class that stores some information of a file such as class names and method metrics etc */
 public class FileMetrics {
     private CompilationUnit cu;
     private List<String> classNames;
@@ -27,6 +29,7 @@ public class FileMetrics {
     private HashMap<String, MethodMetrics> methodsMetrics;
     private HashMap<String, List<MethodDeclaration>> innerClassMethods;
 
+    //initialize all data structures and extract metrics from the compilation unit
     public FileMetrics(CompilationUnit cu){
         this.cu = cu;
         methodsMetrics = new HashMap<>();
@@ -42,6 +45,7 @@ public class FileMetrics {
         extractMetrics();
     }
 
+    //calls the different extract methods
     private void extractMetrics(){
         extractClassNames();
         extractClassLengths();
@@ -50,11 +54,13 @@ public class FileMetrics {
         extractComments();
     }
 
+    //use classVisiotr to get class length
     private void extractClassLengths(){
         VoidVisitor<List<Integer>> classVisitor = new ClassLengthVisitor();
         classVisitor.visit(cu, classLengths);
     }
 
+    //extract class names in the file from the Type Declarations and also the extended types and implemented types
     private void extractClassNames(){
         for(TypeDeclaration t : cu.getTypes()){
             if(t.isClassOrInterfaceDeclaration() && !t.isAnnotationDeclaration()) {
@@ -65,6 +71,7 @@ public class FileMetrics {
                     implementedTypes.addAll(((ClassOrInterfaceDeclaration)t).getImplementedTypes());
 
                 classNames.add(t.getName().toString());
+
                 // Find Inner Classes
                 for (int i = 0; i < t.getMembers().size(); i++) {
                     BodyDeclaration body = t.getMember(i);
@@ -75,6 +82,7 @@ public class FileMetrics {
         }
     }
 
+    //using the field collector visitor this method finds the fields in
     private void extractNumOfFields(){
         VoidVisitor<List<FieldDeclaration>> fieldCollector = new FieldCollector();
         fieldCollector.visit(cu, fields);
@@ -93,13 +101,13 @@ public class FileMetrics {
             List list = td.getMembers();
             for (Object o : list) {
 
-                if (o instanceof AnnotationDeclaration)
+                if (o instanceof AnnotationDeclaration) //ignore annotation files
                     continue;
 
-                if (o instanceof ClassOrInterfaceDeclaration) {
+                if (o instanceof ClassOrInterfaceDeclaration) { //if class add to innerClass methods
                     ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) o;
                     innerClassMethods.put(clazz.getName().asString(), clazz.getMethods());
-                } else if (o instanceof MethodDeclaration) {
+                } else if (o instanceof MethodDeclaration) { //if method add to number of methods and get its metrics
                     MethodDeclaration md = (MethodDeclaration) o;
                     numOfMethods++;
                     if (md.isPublic())
@@ -107,7 +115,7 @@ public class FileMetrics {
 
                     String methodName = md.getName().toString();
                     methodsMetrics.put(methodName, new MethodMetrics(md));
-                } else if (o instanceof ConstructorDeclaration) {
+                } else if (o instanceof ConstructorDeclaration) { //collect the constructors
                     ConstructorDeclaration cd = (ConstructorDeclaration) o;
                     classConstructors.add(cd);
                 }
@@ -116,9 +124,7 @@ public class FileMetrics {
     }
 
     private void extractComments(){
-
         classComments.addAll(cu.getComments());
-
     }
 
 

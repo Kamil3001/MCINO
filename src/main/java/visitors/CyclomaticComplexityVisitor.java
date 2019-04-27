@@ -4,6 +4,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
+//using a visitor to find all branching in the code for cyclomatic complexity computation
 public class CyclomaticComplexityVisitor extends VoidVisitorAdapter<Object> {
 
     private int count = 1; //cyclomatic complexity = num of (if, elsifs, switch cases, loops) + 1

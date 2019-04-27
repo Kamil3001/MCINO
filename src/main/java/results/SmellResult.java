@@ -63,17 +63,17 @@ public class SmellResult {
         return true;
     }
 
+    /* GETTERS */
     public String getSmellName() {
         return smellName;
     }
 
     public double getAverageSeverity() {
-        return (totalSeverity*1.0) / severityPerFile.size();
+        return (totalSeverity*1.0) / severityPerFile.size(); //avg severity per file
     }
 
     public double getAverageOccurrences() {
-        System.out.println(smellName + totalOccurrences + " " + occurrencesPerFile.size());
-        return (totalOccurrences*1.0) / occurrencesPerFile.size();
+        return (totalOccurrences*1.0) / occurrencesPerFile.size(); //avg occurrences of smell per file
     }
 
     public HashMap<String, Integer> getSeverityPerFile() {

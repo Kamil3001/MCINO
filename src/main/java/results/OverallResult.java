@@ -1,20 +1,13 @@
 package results;
 
-
 import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.List;
 
+/* Class that represents the entire analysis as a whole, storing averages of occurrences and severities */
 public class OverallResult {
 
-    private HashMap<String, Double> avgSmellSeverities;
-    private HashMap<String, Double> avgSmellOccurrences;
-    private String[] resultCommentsforAvgSeverity = {
-            "", // x < 0.5
-            "", // 0.5 <= x < 1.5
-            "", // 1.5 <= x < 2.5
-            ""  // 2.5 <= x
-    };
+    private HashMap<String, Double> avgSmellSeverities; //average per smell
+    private HashMap<String, Double> avgSmellOccurrences; //average per file
 
     public OverallResult(HashMap<String, SmellResult> smellResults){
         avgSmellOccurrences = new HashMap<>();
@@ -22,6 +15,7 @@ public class OverallResult {
         fillAvgHashMaps(smellResults);
     }
 
+    //gather all the smell results
     private void fillAvgHashMaps(HashMap<String,SmellResult> smellResults){
 
         for(String smell: smellResults.keySet())
@@ -32,6 +26,7 @@ public class OverallResult {
         }
     }
 
+    /* GETTERS */
     public HashMap<String, Double> getOverallSeverities(){
         return avgSmellSeverities;
     }

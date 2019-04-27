@@ -8,6 +8,7 @@ import results.Resultable;
 import java.util.ArrayList;
 import java.util.List;
 
+/* This class makes sure every smell adheres to the required format */
 public abstract class AbstractCodeSmell implements Resultable {
 
     int severity = 0;

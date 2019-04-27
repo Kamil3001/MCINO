@@ -16,8 +16,12 @@ public class FeatureEnvySmell extends AbstractCodeSmell{
         severity = 0;
         occurrences = new ArrayList<>();
         int numOfProblematicMethods = 0;
+
+        //use a feature envy visitor on method metrics to find number of methods with potential feature envy
         for(Map.Entry<String, MethodMetrics> entry : metrics.getMethodsMetrics().entrySet()){
             FeatureEnvyVisitor v = new FeatureEnvyVisitor(entry.getValue().getMethodDeclaration());
+
+            //check if method is problematic based on its field accesses
             if(v.getNumOfFieldAccesses() > 8 && (v.getNumOfFieldAccesses()*1.0 / entry.getValue().getNumOfStatements() > 0.75)){
                 numOfProblematicMethods++;
                 occurrences.add(new Occurrence(entry.getValue().getStartLine(), entry.getValue().getEndLine()));

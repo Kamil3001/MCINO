@@ -25,11 +25,14 @@ public class DataClumpsSmell extends AbstractCodeSmell {
 
         double avgNumOfParams = 0;
         int maxNumOfParams = 0;
+
+        //loop through all method metrics to find out number of parameters each takes
         for(Map.Entry<String, MethodMetrics> entry : metrics.getMethodsMetrics().entrySet()){
             int numOfParams = entry.getValue().getNumOfParams();
             if(numOfParams > maxNumOfParams)
                 maxNumOfParams = numOfParams;
 
+            //add to occurrences if number of parameters is greater than 4
             if(numOfParams > 4){
                 Optional<Position> methodStart = entry.getValue().getMethodDeclaration().getName().getBegin(); //method start excl annotations
                 methodStart.ifPresent(position -> occurrences.add(new Occurrence(position.line, position.line))); //functional style for adding beginning to occurrences if present

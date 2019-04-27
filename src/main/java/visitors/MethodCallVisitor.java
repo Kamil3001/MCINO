@@ -3,6 +3,7 @@ package visitors;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
+//check if a given method has been used
 public class MethodCallVisitor extends VoidVisitorAdapter<Void> {
     private String methodName;
     private int count = 0;

@@ -36,6 +36,7 @@ public class MethodMetrics {
         numOfParams = md.getParameters().size();
     }
 
+    /* GETTERS */
     public int getNumOfLines() {
         return numOfLines;
     }

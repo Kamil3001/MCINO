@@ -45,7 +45,7 @@ public class RefusedBequestSmell extends AbstractCodeSmell {
                 if(md.isAnnotationPresent("Override")) //check for overrides
                     numOfOverrides++;
 
-                if(!someMethodsUsed && timesMethodUsed(md, metrics) > 3) { //assume that method is used if there are more than 3 uses of method with same name
+                if(!someMethodsUsed && timesMethodUsed(md, metrics) > 1) { //as long as method is used once we count it
                     someMethodsUsed = true;
                 }
                 else{
@@ -95,8 +95,7 @@ public class RefusedBequestSmell extends AbstractCodeSmell {
         return false;
     }
 
-    //this method returns the use of a method with same name so not necessarily confirming it
-    //Assume high usageCount implies at least one usage of our method
+    //this method returns the use of a method with same name
     private int timesMethodUsed(MethodDeclaration md, FileMetrics metrics){
         MethodCallVisitor visitor;
         int usageCount = 0;

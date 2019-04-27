@@ -6,6 +6,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import java.util.List;
 
+//Visitor that computes the length of a class
 public class ClassLengthVisitor extends VoidVisitorAdapter<List<Integer>> {
 
     @Override

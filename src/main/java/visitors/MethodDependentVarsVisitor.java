@@ -9,6 +9,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+//get all the different Types used (i.e. get all classes used)
 public class MethodDependentVarsVisitor extends VoidVisitorAdapter<Void> {
 
     private List<String> types;

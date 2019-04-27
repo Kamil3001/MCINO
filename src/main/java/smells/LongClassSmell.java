@@ -4,6 +4,7 @@ import metrics.FileMetrics;
 
 import java.util.ArrayList;
 
+//Detects overly long classes
 public class LongClassSmell extends AbstractCodeSmell {
     private final static String smellName = "Long Class";
 

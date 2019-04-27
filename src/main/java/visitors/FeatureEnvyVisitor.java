@@ -5,6 +5,7 @@ import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
+//Using a visitor to determine number of uses of other classes fields / getter methods
 public class FeatureEnvyVisitor extends VoidVisitorAdapter<Object> {
 
     private int count = 0;

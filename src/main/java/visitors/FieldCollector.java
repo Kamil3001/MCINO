@@ -5,6 +5,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import java.util.List;
 
+//visitor which gathers all fields into a list
 public class FieldCollector extends VoidVisitorAdapter<List<FieldDeclaration>> {
 
     @Override
