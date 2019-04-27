@@ -37,7 +37,7 @@ public class Comments {
                 "No duplicated code detected.",
                 "Few cases of duplicated code found, inspect the affected code stumps.",
                 "Many cases of duplicated code found, consider enclosing affected code in a method",
-                "This project's a mess. Do you even know what reusable code means?"
+                "This file's a mess. Do you even know what reusable code means?"
         });
         put("Feature Envy", new String[]{
                 "No signs of feature envy detected",

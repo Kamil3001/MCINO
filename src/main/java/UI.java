@@ -181,32 +181,48 @@ public class UI implements Initializable {
                         .subscribe(change -> codeSource.setStyleSpans(0, highlight.computeHighlighting(codeSource.getText())));
                 codeSource.replaceText(0, 0, smellDetector.getSourceFiles().get(comboSource.getSelectionModel().getSelectedItem()));
                 codeSource.setEditable(false);
-
-
-                List<Occurrence> occurrence = smellDetector.getSmellResults().get(smell).getOccurrencesPerFile().get(file);
-                if(occurrence!=null) {
-                    for (Occurrence occ : occurrence) {
-                        //System.out.println(occ.getStartLine() + " " +occ.getEndLine());
-                        codeSource.setParagraphStyle(occ.getStartLine()-1, Collections.singleton("smell"));
-                        for(int i =occ.getStartLine()-1;i < occ.getEndLine();i++)
-                        {
-                            codeSource.setParagraphStyle(i,Collections.singleton("smell"));
-                        }
-                        //System.out.println(codeSource.getText(occ.getStartLine(),0,occ.getEndLine(),occ.getEndLine()+1));
-
-                    }
-                }
                 codePane.getChildren().add(new VirtualizedScrollPane<>(codeSource));
-                lblSource.setText(file);
+
+
+
                 int severity = 0;
                 for(String sm: smellDetector.getSmellResults().keySet())
                 {
                     SmellResult sr = smellDetector.getSmellResults().get(sm);
                     if(smellDetector.getSmellResults().get(sm).getSmellName().equals(smell)){
                         severity= sr.getSeverityPerFile().get(file);
+                        break;
                     }
                 }
-                lblSmell.setText(Comments.getCommentsClass().getComment(smell, severity) +" \nSeverity is " + severity);
+                // Generates string to show user details of chosen smell in chosen file
+                String details = Comments.getCommentsClass().getComment(smell,severity)
+                        +"\nThe severity rating is " + severity +"\n";
+                StringBuilder detailsBuilder = new StringBuilder(details);
+
+
+                //Finds occurrences of chosen smell in chosen file
+                List<Occurrence> occurrences = smellDetector.getSmellResults().get(smell).getOccurrencesPerFile().get(file);
+
+                //Highlights the occurrence of the smells in the code pane and builds detailed string of occurences
+                if(occurrences!=null) {
+                    detailsBuilder.append("Affected lines are ");
+                    for(Occurrence occurrence: occurrences) {
+                        highlightOccurrence(codeSource, occurrence);
+                        detailsBuilder.append(getOccurrenceDetails(occurrence)).append(", ");
+                        if(occurrence.hasLink()) {
+                            Occurrence linkedOccurrence = occurrence.getLinkedOccurrence();
+                            highlightOccurrence(codeSource,linkedOccurrence);
+                            detailsBuilder.append(", ").append(getOccurrenceDetails(linkedOccurrence));
+                        }
+                    }
+                    detailsBuilder.deleteCharAt(detailsBuilder.lastIndexOf(",")); // removing the last comma
+                    detailsBuilder.append(".");
+                }
+                lblSource.setText("Details of source code - " + file);
+
+
+
+                lblSmell.setText(detailsBuilder.toString());
             }else{
                 Alert error = new Alert(Alert.AlertType.ERROR);
                 error.setHeaderText("Please make a selection first.");
@@ -523,4 +539,18 @@ public class UI implements Initializable {
         webEngine.setUserStyleSheetLocation(getClass().getResource("tab-content.css").toString());
         currTab.setContent(webView);
     }
+
+    private void highlightOccurrence(CodeArea codeSource, Occurrence occurrence) {
+        codeSource.setParagraphStyle(occurrence.getStartLine()-1, Collections.singleton("smell"));
+        for(int i =occurrence.getStartLine()-1;i < occurrence.getEndLine();i++) {
+            codeSource.setParagraphStyle(i,Collections.singleton("smell"));
+        }
+
+    }
+
+    private String getOccurrenceDetails(Occurrence occurrence)
+    {
+        return occurrence.getStartLine() + "-"+occurrence.getEndLine();
+    }
+
 }
