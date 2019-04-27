@@ -45,11 +45,11 @@ public class RefusedBequestSmell extends AbstractCodeSmell {
                 if(md.isAnnotationPresent("Override")) //check for overrides
                     numOfOverrides++;
 
-                if(!someMethodsUsed && timesMethodUsed(md, metrics) > 1) { //as long as method is used once we count it
+                if(timesMethodUsed(md, metrics) > 1) { //as long as method is used once we count it
                     someMethodsUsed = true;
                 }
                 else{
-                    System.out.println(metrics.getClassNames().get(0));
+                    System.out.println(md.getNameAsString());
                     System.out.println(entry.getValue().getStartLine());
                     occurrences.add(new Occurrence(entry.getValue().getStartLine(), entry.getValue().getEndLine())); //otherwise assume method is unused
                     severity=1;
