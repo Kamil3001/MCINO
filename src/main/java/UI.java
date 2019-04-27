@@ -151,12 +151,20 @@ public class UI implements Initializable {
 
                 overallResult = new OverallResult(smellDetector.getSmellResults());
 
-                Alert notification = new Alert(Alert.AlertType.CONFIRMATION);
-                notification.setHeaderText("Project loaded.");
-                notification.setTitle("Message");
-                notification.showAndWait();
+                // Notify the user that a project has been loaded
+                if(overallResult.getOverallOccurrences().size() > 0) {
+                    Alert notification = new Alert(Alert.AlertType.CONFIRMATION);
+                    notification.setHeaderText("Project loaded.");
+                    notification.setTitle("Message");
+                    notification.showAndWait();
 
-                initializeComboBox();
+                    initializeComboBox();
+                }else{
+                    Alert notification = new Alert(Alert.AlertType.ERROR);
+                    notification.setHeaderText("Wow, your project might not have smells... jk, something has gone wrong.");
+                    notification.setTitle("Error");
+                    notification.showAndWait();
+                }
 
             }else{
                 reset();
@@ -172,6 +180,9 @@ public class UI implements Initializable {
             String file = comboSource.getSelectionModel().getSelectedItem();
             String smell = comboSmell.getSelectionModel().getSelectedItem();
             if(comboSource.getSelectionModel().getSelectedItem() != null && comboSmell.getSelectionModel().getSelectedItem() != null) {
+
+                // Setting up the CodeArea to show it's source code, and run the SyntaxHighlighter through the code to
+                // get corresponding syntax highlighting per keyword
                 codePane.getChildren().clear();
                 CodeArea codeSource = new CodeArea();
                 codeSource.getStylesheets().add(getClass().getResource("highlight.css").toExternalForm());
@@ -185,6 +196,7 @@ public class UI implements Initializable {
 
 
 
+                //Finds severity of chosen smell
                 int severity = 0;
                 for(String sm: smellDetector.getSmellResults().keySet())
                 {
@@ -203,7 +215,7 @@ public class UI implements Initializable {
                 //Finds occurrences of chosen smell in chosen file
                 List<Occurrence> occurrences = smellDetector.getSmellResults().get(smell).getOccurrencesPerFile().get(file);
 
-                //Highlights the occurrence of the smells in the code pane and builds detailed string of occurences
+                //Highlights the occurrence of the smells in the code pane and builds detailed string of occurrences
                 if(occurrences!=null) {
                     detailsBuilder.append("Affected lines are ");
                     for(Occurrence occurrence: occurrences) {
@@ -218,10 +230,8 @@ public class UI implements Initializable {
                     detailsBuilder.deleteCharAt(detailsBuilder.lastIndexOf(",")); // removing the last comma
                     detailsBuilder.append(".");
                 }
+
                 lblSource.setText("Details of source code - " + file);
-
-
-
                 lblSmell.setText(detailsBuilder.toString());
             }else{
                 Alert error = new Alert(Alert.AlertType.ERROR);
@@ -231,6 +241,7 @@ public class UI implements Initializable {
         }
     }
 
+    // Allows the window to be minimized
     @FXML
     void handleMinimize(MouseEvent event) {
         if(event.getSource() == btnMinimize)
@@ -240,6 +251,7 @@ public class UI implements Initializable {
     }
 
     private void makeStageDraggable() {
+        // Get current coordinates of mouse click
         root.setOnMousePressed((event)-> {
 
             xOffset = event.getSceneX();
@@ -247,24 +259,28 @@ public class UI implements Initializable {
         });
 
 
+        // Drag stage with the mouse
         root.setOnMouseDragged((event)->{
             Main.stage.setX(event.getScreenX() - xOffset);
             Main.stage.setY(event.getScreenY() - yOffset);
             Main.stage.setOpacity(0.8f);
         });
 
+        // Drop the stage when mouse released
         root.setOnMouseReleased((event) -> Main.stage.setOpacity(1.0f));
 
         root.setOnDragDone((DragEvent mouseEvent) -> Main.stage.setOpacity(1.0f));
     }
 
     private void makeTabPaneListener() {
+        // For every tab, load it's corresponding html page
         for(Tab currTab: tabAbout.getTabs()) {
             currTab.setOnSelectionChanged(e-> setHtmlContent(currTab));
         }
 
     }
 
+    // for the given chart, make it's value appear once mouse hovers over bar
     private void makeBarListener(BarChart<?,?> chart) {
         DecimalFormat df = new DecimalFormat("0.00");
 
@@ -292,12 +308,14 @@ public class UI implements Initializable {
 
     /** Helper Functions **/
 
+    // Used to open directory chooser for the user to chose their project
     private File showDirChooser(){
         DirectoryChooser dc = new DirectoryChooser();
         dc.setInitialDirectory(new File(System.getProperty("user.dir")));
         return dc.showDialog(null); // returns selected directory
     }
 
+    // Sets up the axis and customization of the Bar Charts
     private void setupChart(){
         CategoryAxis xAxisOcc = new CategoryAxis();
         CategoryAxis xAxisSev = new CategoryAxis();
@@ -323,6 +341,7 @@ public class UI implements Initializable {
         barSeverity.setLegendVisible(false);
     }
 
+    // Fills the charts with data extracted from smell classes
     private void fillChart(){
 
         XYChart.Series severityData = new XYChart.Series<>();
@@ -384,7 +403,6 @@ public class UI implements Initializable {
         }
 
 
-
         // Reset drop down menus
         comboSmell.getItems().clear();
         comboSource.getItems().clear();
@@ -425,6 +443,7 @@ public class UI implements Initializable {
 
     }
 
+    // Opens home pane
     private void openHome() {
         hideAllPanes();
         pnHome.toFront();
@@ -432,6 +451,7 @@ public class UI implements Initializable {
         lblPage.setText("Home");
     }
 
+    // Opens overview pane
     private void openAnalysis() {
         hideAllPanes();
         pnAnalysis.toFront();
@@ -450,6 +470,7 @@ public class UI implements Initializable {
             }
             barSeverity.setVisible(true);
             barOccurrence.setVisible(true);
+            // Notifies user that he/she may hover over the bar to show the bar's value
             if(!isNotified) {
                 Alert notification = new Alert(Alert.AlertType.INFORMATION);
                 notification.setHeaderText("Hover cursor over bars to see their values!");
@@ -460,6 +481,7 @@ public class UI implements Initializable {
         }
     }
 
+    //Opens details pane
     private void openDetails() {
         hideAllPanes();
         pnDetails.toFront();
@@ -467,6 +489,7 @@ public class UI implements Initializable {
         lblPage.setText("Details");
     }
 
+    //Opens about pane
     private void openAbout() {
         hideAllPanes();
         pnAbout.toFront();
@@ -475,8 +498,12 @@ public class UI implements Initializable {
         setHtmlContent(tabAbout.getTabs().get(0));
     }
 
+    // Fills the dropdown menu with necessary data in the details tab
     private void initializeComboBox() {
+        // extracts file names from project directory and adds to source dropdown menu
         comboSource.getItems().addAll(smellDetector.getSmellResults().get("Lazy Class").getSeverityPerFile().keySet());
+
+        // Extracts all smell names and adds to smell dropdown menu
         ArrayList<String> smellNames = new ArrayList<>();
         for(AbstractCodeSmell smell: smellDetector.getSmells())
         {
@@ -484,6 +511,7 @@ public class UI implements Initializable {
         }
         comboSmell.getItems().addAll(smellNames);
 
+        // Used to customize the css of the dropdown menus
         Callback<ListView<String>, ListCell<String>> cellFactory = new Callback<>() {
             @Override
             public ListCell<String> call(ListView<String> arg0) {
@@ -518,11 +546,11 @@ public class UI implements Initializable {
             }
         };
 
-
         comboSource.setCellFactory(cellFactory);
         comboSmell.setCellFactory(cellFactory);
     }
-    
+
+    // Adds data to the barcharts
     private void addData(XYChart.Series series, XYChart.Data<String, Number> data){
         series.getData().add(data);
         data.nodeProperty().addListener((ov, oldNode, newNode) -> {
@@ -531,6 +559,7 @@ public class UI implements Initializable {
         System.out.println(data.getXValue() + " " + data.getYValue());
     }
 
+    // Sets the corresponding webpage for chosen tab in the about pane
     private void setHtmlContent(Tab currTab){
         WebView webView = new WebView();
         WebEngine webEngine = webView.getEngine();
@@ -540,6 +569,7 @@ public class UI implements Initializable {
         currTab.setContent(webView);
     }
 
+    // Highlight the occurrence of a smell in the CodeArea
     private void highlightOccurrence(CodeArea codeSource, Occurrence occurrence) {
         codeSource.setParagraphStyle(occurrence.getStartLine()-1, Collections.singleton("smell"));
         for(int i =occurrence.getStartLine()-1;i < occurrence.getEndLine();i++) {
@@ -548,6 +578,7 @@ public class UI implements Initializable {
 
     }
 
+    // Take out the start and end line from the occurrence of a smell
     private String getOccurrenceDetails(Occurrence occurrence)
     {
         return occurrence.getStartLine() + "-"+occurrence.getEndLine();
