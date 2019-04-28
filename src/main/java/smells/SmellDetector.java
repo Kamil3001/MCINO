@@ -34,7 +34,7 @@ public class SmellDetector {
         smells[5] = new FeatureEnvySmell();
         smells[6] = new HeavyCommentingSmell();
         smells[7] = new LazyClassSmell(metrics);
-        smells[8] = new RefusedBequestSmell(CUs, metrics);
+        smells[8] = new RefusedBequestSmell(CUs);
 
     }
 

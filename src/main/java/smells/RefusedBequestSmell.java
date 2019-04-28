@@ -18,13 +18,11 @@ import java.util.Map;
 are completely different */
 public class RefusedBequestSmell extends AbstractCodeSmell {
     private final static String smellName = "Refused Bequest";
-    private final FileMetrics[] allMetrics;
     private CompilationUnit[] CUs;
 
 
-    public RefusedBequestSmell(CompilationUnit[] CUs, FileMetrics[] allMetrics){
+    public RefusedBequestSmell(CompilationUnit[] CUs){
         this.CUs = CUs;
-        this.allMetrics = allMetrics;
     }
 
     @Override
@@ -99,12 +97,11 @@ public class RefusedBequestSmell extends AbstractCodeSmell {
     private int timesMethodUsed(MethodDeclaration md, FileMetrics metrics){
         MethodCallVisitor visitor;
         int usageCount = 0;
-        for(FileMetrics f : allMetrics){
-            for(Map.Entry<String, MethodMetrics> entry : metrics.getMethodsMetrics().entrySet()){
-                entry.getValue().getMethodDeclaration().accept((visitor = new MethodCallVisitor(md.getNameAsString())), null);
-                usageCount += visitor.getCount();
-            }
+        for(Map.Entry<String, MethodMetrics> entry : metrics.getMethodsMetrics().entrySet()){
+            entry.getValue().getMethodDeclaration().accept((visitor = new MethodCallVisitor(md.getNameAsString())), null);
+            usageCount += visitor.getCount();
         }
+
 
         return usageCount;
     }
