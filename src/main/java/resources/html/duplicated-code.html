@@ -9,7 +9,7 @@
     <h2>What is a Duplicated Code smell?</h2>
     When a program contains two sections of code which are identical or extremely similar.
 
-    <h2>How to treat?</h2>
+    <h2>How can we treat duplicated code?</h2>
     <ul>
         <li>Use an Extract Method and place calls for the new method in both places if the same piece of code is found in different methods in the class.</li>
         <li>If the same code is found in two subclasses of the same level:</li>
@@ -27,7 +27,7 @@
         <li>If the same code is performed in all branches of a conditional expression: place the identical code outside of the condition tree by using Consolidate Duplicate Conditional Fragments.</li>
     </ul>
 
-    <h2>Why bother fixing this smell?</h2>
+    <h2>Why bother?</h2>
     <ul>
         <li>Makes code easier to simplify and cheaper to support .</li>
         <li>Merging duplicate code simplifies the structure of your code and makes it shorter.</li>
