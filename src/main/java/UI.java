@@ -434,7 +434,7 @@ public class UI implements Initializable {
         hideAllPanes();
         pnAnalysis.toFront();
         pnAnalysis.setVisible(true);
-        lblPage.setText("Analysis");
+        lblPage.setText("Overview");
         barValue.setVisible(false);
         lblComment.setVisible(false);
         if(!isDirChosen){

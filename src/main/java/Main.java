@@ -1,6 +1,7 @@
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -14,6 +15,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        System.out.println(getClass().getResource("ui.fxml"));
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ui.fxml"));
         AnchorPane root = fxmlLoader.load();
 
@@ -22,7 +24,10 @@ public class Main extends Application {
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setTitle("NoseJob v1.0");
         primaryStage.setScene(scene);
+
         stage = primaryStage;
+        stage.getIcons().add(
+                new Image(getClass().getResourceAsStream( "icon.png" )));
         primaryStage.show();
 
     }

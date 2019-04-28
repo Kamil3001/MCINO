@@ -26,11 +26,13 @@ public class Setup {
 
         if (this.files != null) {
             for (File file : this.files) {
-                if (isJava(file)) {
+                if (isJava(file)) {// check if current file has .java extension
 
                     String javaFileName = file.getName().substring(0, file.getName().indexOf(".")); //removing .java extension from file name
 
                     try{
+
+                        // extract the contents of source file into a string
                         Scanner sc = new Scanner(file);
                         StringBuilder code = new StringBuilder();
                         while(sc.hasNextLine())
@@ -39,7 +41,7 @@ public class Setup {
                         }
                         sc.close();
 
-                        this.javaFiles.put(javaFileName,code.toString());
+                        this.javaFiles.put(javaFileName,code.toString()); // add filename and its contents to hashmap
 
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
@@ -50,11 +52,11 @@ public class Setup {
         }
     }
     private void findJavaFiles(String smellyCodeDir) {
-        if(getDirectory(smellyCodeDir)){
-            getFiles();
+        if(getDirectory(smellyCodeDir)){ // gets path of next java file
+            getFiles(); // extract all files from directory
             for(File f: this.files)
             {
-                if(f.isDirectory()) {
+                if(f.isDirectory()) { // then repeat if any of the files inside current directory, is a directory
                     findJavaFiles(f.getAbsolutePath());
                 }
             }
@@ -71,12 +73,12 @@ public class Setup {
 
         int i = 0;
 
-        if (fileList != null && fileList.length > 0) {
-            while (i < fileList.length && !found) {
+        if (fileList != null && fileList.length > 0) { // ensures directory is not empty
+            while (i < fileList.length && !found) { // while java file is not found
                 if (fileList[i].isDirectory()) {
-                    found = getDirectory(fileList[i].getAbsolutePath());
-                } else if (isJava(fileList[i])) {
-                    this.javaDir = fileList[i].getAbsolutePath().substring(0, fileList[i].getAbsolutePath().indexOf(fileList[i].getName()));
+                    found = getDirectory(fileList[i].getAbsolutePath()); // run recursively on newly found directory
+                } else if (isJava(fileList[i])) { // if any of the files is a java file
+                    this.javaDir = fileList[i].getAbsolutePath().substring(0, fileList[i].getAbsolutePath().indexOf(fileList[i].getName())); // get directory path in which the java file is in
                     found = true;
                 }
                 i++;
@@ -108,7 +110,7 @@ public class Setup {
         int index = 0;
         for(Map.Entry<String, String> code: javaFiles.entrySet())
         {
-            cUnit[index] = JavaParser.parse(code.getValue());
+            cUnit[index] = JavaParser.parse(code.getValue()); // parsing all Java files
             index++;
         }
 

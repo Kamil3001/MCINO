@@ -23,6 +23,7 @@ public class SyntaxHighlighter {
             "transient", "try", "void", "volatile", "while"
     };
 
+    // Regex patterns
     private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
     private static final String PAREN_PATTERN = "\\(|\\)";
     private static final String BRACE_PATTERN = "\\{|\\}";
@@ -53,6 +54,8 @@ public class SyntaxHighlighter {
         int lastKwEnd = 0;
         StyleSpansBuilder<Collection<String>> spansBuilder
                 = new StyleSpansBuilder<>();
+
+        // For each valid pattern found, assign a css class to that pattern i.e. KEYWORD_PATTERN gets assigned keyword class
         while(matcher.find()) {
             String styleClass =
                     matcher.group("KEYWORD") != null ? "keyword" :
@@ -69,7 +72,7 @@ public class SyntaxHighlighter {
             spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
             lastKwEnd = matcher.end();
         }
-        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
+        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd); // adding all css classes to spansbuilder, for CodeArea
         return spansBuilder.create();
     }
 
