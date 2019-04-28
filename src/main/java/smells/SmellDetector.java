@@ -30,7 +30,7 @@ public class SmellDetector {
         smells[1] = new LongClassSmell();
         smells[2] = new CyclomaticComplexitySmell();
         smells[3] = new DataClumpsSmell();
-        smells[4] = new DuplicatedCodeSmell();
+        smells[4] = new DuplicatedCodeSmell(metrics);
         smells[5] = new FeatureEnvySmell();
         smells[6] = new HeavyCommentingSmell();
         smells[7] = new LazyClassSmell(metrics);
