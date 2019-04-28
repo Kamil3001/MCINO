@@ -239,7 +239,7 @@
                      </font>
                   </Label>
                   <FontAwesomeIconView fx:id="btnClose" fill="#333645" glyphName="CLOSE" layoutX="1016.0" layoutY="31.0" onMouseClicked="#handleClose" size="20" wrappingWidth="14.142857551574707" />
-                  <FontAwesomeIconView fx:id="btnMinimize" glyphName="WINDOW_MINIMIZE" layoutX="991.0" layoutY="26.0" onMouseClicked="#handleMinimize" size="14" />
+                  <FontAwesomeIconView fx:id="btnMinimize" glyphName="MINUS" layoutX="993.0" layoutY="31.0" onMouseClicked="#handleMinimize" size="16" />
                </children>
             </Pane>
             <StackPane prefHeight="680.0" prefWidth="1043.0">

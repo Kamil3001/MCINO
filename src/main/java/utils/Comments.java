@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class Comments {
 
     private static Comments cache = null;
-    private HashMap<String, String[]>  comments = new HashMap<>() {{
+    private HashMap<String, String[]>  comments = new HashMap<String, String[]>() {{
 
         put("Long Class", new String[]{
                 "Acceptable class length (<800)",
@@ -75,7 +75,6 @@ public class Comments {
     }
 
     public String getComment(String smellName, int severity){
-        System.out.println(smellName + " " + severity);
         return comments.get(smellName)[severity];
     }
 

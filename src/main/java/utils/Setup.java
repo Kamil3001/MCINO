@@ -106,8 +106,6 @@ public class Setup {
     public CompilationUnit[] run(){
         CompilationUnit[] cUnit = new CompilationUnit[javaFiles.keySet().size()];
         int index = 0;
-        System.out.println(javaFiles.keySet());
-
         for(Map.Entry<String, String> code: javaFiles.entrySet())
         {
             cUnit[index] = JavaParser.parse(code.getValue());
@@ -122,15 +120,4 @@ public class Setup {
         return this.javaFiles;
     }
 
-    /*public String[] getFileNames()
-    {
-        String[] fileNames = new String[javaFiles.keySet().size()];
-        int index = 0;
-        for(Map.Entry<String, String> code: javaFiles.entrySet())
-        {
-            fileNames[index] = code.getKey();
-            index++;
-        }
-        return fileNames;
-    }*/
 }

@@ -49,8 +49,6 @@ public class RefusedBequestSmell extends AbstractCodeSmell {
                     someMethodsUsed = true;
                 }
                 else{
-                    System.out.println(md.getNameAsString());
-                    System.out.println(entry.getValue().getStartLine());
                     occurrences.add(new Occurrence(entry.getValue().getStartLine(), entry.getValue().getEndLine())); //otherwise assume method is unused
                     severity=1;
                 }

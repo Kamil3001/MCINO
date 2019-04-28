@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 
 public class OccurrenceTest {
 
+
     private static Occurrence o1;
     private static Occurrence o2;
     private static Occurrence o3;

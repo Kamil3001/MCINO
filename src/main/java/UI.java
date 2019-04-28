@@ -76,7 +76,7 @@ public class UI implements Initializable {
     private OverallResult overallResult;
 
 
-    private HashMap<String, String> defaultColors = new HashMap<>(){
+    private HashMap<String, String> defaultColors = new HashMap<String, String>(){
         {
             put("Long Methods","#f3622d");
             put("Long Class","#fba71b");
@@ -140,15 +140,12 @@ public class UI implements Initializable {
         if(event.getSource() == btnProject){
             File dir = showDirChooser();
             if(dir!=null) {
-
                 if(projectDir!=null) reset(); // If directory was already chosen, remove all previous data
 
                 isDirChosen = true; // Used for determining which buttons/pane to show
-
                 projectDir = dir.getAbsolutePath();
                 smellDetector = new SmellDetector(projectDir);
                 smellDetector.detectSmells();
-
                 overallResult = new OverallResult(smellDetector.getSmellResults());
 
                 // Notify the user that a project has been loaded
@@ -165,11 +162,9 @@ public class UI implements Initializable {
                     notification.setTitle("Error");
                     notification.showAndWait();
                 }
-
             }else{
                 reset();
             }
-
         }
     }
 
@@ -194,8 +189,6 @@ public class UI implements Initializable {
                 codeSource.setEditable(false);
                 codePane.getChildren().add(new VirtualizedScrollPane<>(codeSource));
 
-
-
                 //Finds severity of chosen smell
                 int severity = 0;
                 for(String sm: smellDetector.getSmellResults().keySet())
@@ -210,7 +203,6 @@ public class UI implements Initializable {
                 String details = Comments.getCommentsClass().getComment(smell,severity)
                         +"\nThe severity rating is " + severity +"\n";
                 StringBuilder detailsBuilder = new StringBuilder(details);
-
 
                 //Finds occurrences of chosen smell in chosen file
                 List<Occurrence> occurrences = smellDetector.getSmellResults().get(smell).getOccurrencesPerFile().get(file);
@@ -230,7 +222,6 @@ public class UI implements Initializable {
                     detailsBuilder.deleteCharAt(detailsBuilder.lastIndexOf(",")); // removing the last comma
                     detailsBuilder.append(".");
                 }
-
                 lblSource.setText("Details of source code - " + file);
                 lblSmell.setText(detailsBuilder.toString());
             }else{
@@ -253,7 +244,6 @@ public class UI implements Initializable {
     private void makeStageDraggable() {
         // Get current coordinates of mouse click
         root.setOnMousePressed((event)-> {
-
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
         });
@@ -268,7 +258,6 @@ public class UI implements Initializable {
 
         // Drop the stage when mouse released
         root.setOnMouseReleased((event) -> Main.stage.setOpacity(1.0f));
-
         root.setOnDragDone((DragEvent mouseEvent) -> Main.stage.setOpacity(1.0f));
     }
 
@@ -277,7 +266,6 @@ public class UI implements Initializable {
         for(Tab currTab: tabAbout.getTabs()) {
             currTab.setOnSelectionChanged(e-> setHtmlContent(currTab));
         }
-
     }
 
     // for the given chart, make it's value appear once mouse hovers over bar
@@ -293,7 +281,6 @@ public class UI implements Initializable {
                     lblComment.setText(overallResult.getComments((String) data.getXValue()));
                     barValue.setStyle("-fx-text-fill: " + defaultColors.get((String)data.getXValue()) + ";");
                 });
-
                 data.getNode().setOnMouseExited((event) -> {
                     lblComment.setVisible(false);
                     barValue.setVisible(false);
@@ -302,7 +289,6 @@ public class UI implements Initializable {
                 });
             }
         }
-
     }
 
 
@@ -311,7 +297,7 @@ public class UI implements Initializable {
     // Used to open directory chooser for the user to chose their project
     private File showDirChooser(){
         DirectoryChooser dc = new DirectoryChooser();
-        dc.setInitialDirectory(new File(System.getProperty("user.dir")));
+        //dc.setInitialDirectory(new File(System.getProperty("user.dir")));
         return dc.showDialog(null); // returns selected directory
     }
 
@@ -363,15 +349,10 @@ public class UI implements Initializable {
             average = overallResult.getOverallSeverities().get(smell);
             dataSev = new XYChart.Data<>(smell, average);
             addData(severityData, dataSev);
-                
-
         }
 
         barOccurrence.getData().addAll(occurrenceData);
         barSeverity.getData().addAll(severityData);
-
-     ;
-
 
         occurrenceBox.getChildren().add(barOccurrence);
         severityBox.getChildren().add(barSeverity);
@@ -380,7 +361,6 @@ public class UI implements Initializable {
 
         makeBarListener(barOccurrence);
         makeBarListener(barSeverity);
-
     }
 
     private void hideAllPanes() {
@@ -401,7 +381,6 @@ public class UI implements Initializable {
             barOccurrence.setVisible(false);
             barSeverity.setVisible(false);
         }
-
 
         // Reset drop down menus
         comboSmell.getItems().clear();
@@ -433,14 +412,13 @@ public class UI implements Initializable {
         // Remove contents of CodeArea
         codePane.getChildren().clear();
 
-        lblSource.setText("Source");
-        lblSmell.setText("Smell");
+        lblSource.setText("");
+        lblSmell.setText("");
 
         // Reset variables
         projectDir = null;
         isDirChosen = false;
         isCreated = false;
-
     }
 
     // Opens home pane
@@ -512,7 +490,7 @@ public class UI implements Initializable {
         comboSmell.getItems().addAll(smellNames);
 
         // Used to customize the css of the dropdown menus
-        Callback<ListView<String>, ListCell<String>> cellFactory = new Callback<>() {
+        Callback<ListView<String>, ListCell<String>> cellFactory = new Callback<ListView<String>, ListCell<String>>() {
             @Override
             public ListCell<String> call(ListView<String> arg0) {
                 ListCell<String> cell = new ListCell<String>() {
@@ -528,7 +506,6 @@ public class UI implements Initializable {
                     }
 
                 };
-
                 cell.hoverProperty().addListener((observable -> {
                     if (cell.isHover()) {
                         cell.setStyle("-fx-background-color: #4c8bf5;" +
@@ -556,7 +533,6 @@ public class UI implements Initializable {
         data.nodeProperty().addListener((ov, oldNode, newNode) -> {
             newNode.setStyle("-fx-bar-fill: " + defaultColors.get(data.getXValue()));
         });
-        System.out.println(data.getXValue() + " " + data.getYValue());
     }
 
     // Sets the corresponding webpage for chosen tab in the about pane
@@ -564,7 +540,8 @@ public class UI implements Initializable {
         WebView webView = new WebView();
         WebEngine webEngine = webView.getEngine();
         String tabName = currTab.getText();
-        webEngine.loadContent(HTMLUtil.getHTMLUtil().getHtml(tabName));
+        String htmlFile = HTMLUtil.getHTMLUtil().getHtmlFile(tabName);
+        webEngine.load(getClass().getClassLoader().getResource(htmlFile).toExternalForm());
         webEngine.setUserStyleSheetLocation(getClass().getResource("tab-content.css").toString());
         currTab.setContent(webView);
     }
