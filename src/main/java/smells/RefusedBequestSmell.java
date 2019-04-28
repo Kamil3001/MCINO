@@ -8,6 +8,7 @@ import metrics.FileMetrics;
 import metrics.MethodMetrics;
 import results.Occurrence;
 import visitors.MethodCallVisitor;
+import visitors.SuperCallVisitor;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -39,13 +40,21 @@ public class RefusedBequestSmell extends AbstractCodeSmell {
             int numOfOverrides = 0;
             boolean someMethodsUsed = false;
 
+            //check if the constructor contains a call to super implying that super class is being used
+            SuperCallVisitor scv = new SuperCallVisitor();
+            for(ConstructorDeclaration cd : metrics.getClassConstructors()){
+                scv.visit(cd.getBody(), null);
+                if(scv.hasSuperCall())
+                    break;
+            }
+
             //for each method check if it overrides superclass methods and if they are used throughout the code
             for(Map.Entry<String, MethodMetrics> entry : metrics.getMethodsMetrics().entrySet()){
                 MethodDeclaration md = entry.getValue().getMethodDeclaration();
                 if(md.isAnnotationPresent("Override")) //check for overrides
                     numOfOverrides++;
 
-                if(timesMethodUsed(md, metrics) > 1) { //as long as method is used once we count it
+                if(timesMethodUsed(md, metrics) > 0) { //as long as method is used once we count it
                     someMethodsUsed = true;
                 }
                 else{
@@ -54,19 +63,12 @@ public class RefusedBequestSmell extends AbstractCodeSmell {
                 }
             }
 
-            if(someMethodsUsed){
-                if(numOfOverrides == 0)
-                    severity = 2;
-                else
-                    severity = 1; //this severity is likely to pop up as it serves to remind user of their motives
-            }
-            else if(numOfOverrides == 0){
-                severity = 3;
-            }
-            else{
-                severity = 2;
-            }
-
+            if(numOfOverrides == 0)
+                severity++;
+            if(!someMethodsUsed)
+                severity++;
+            if(!scv.hasSuperCall())
+                severity++;
         }
     }
 
@@ -98,9 +100,6 @@ public class RefusedBequestSmell extends AbstractCodeSmell {
         MethodCallVisitor visitor;
         int usageCount = 0;
         for(FileMetrics f : allMetrics){
-            if(f == metrics)
-                continue;
-
             for(Map.Entry<String, MethodMetrics> entry : metrics.getMethodsMetrics().entrySet()){
                 entry.getValue().getMethodDeclaration().accept((visitor = new MethodCallVisitor(md.getNameAsString())), null);
                 usageCount += visitor.getCount();
