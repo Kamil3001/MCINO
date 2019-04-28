@@ -6,7 +6,6 @@ MCINO Code Smeller
 ----------------------------
 HOW TO RUN THE JAR FILE:
 ----------------------------
-Just checking what will get changed....
 1.	Make sure you have Java 8 installed to run the jar file.
 
 2.	Download Mcino.jar from the github repository.
