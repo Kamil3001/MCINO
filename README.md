@@ -18,7 +18,7 @@ SETTING UP THE MAVEN PROJECT IN INTELLIJ
 	<code>Add as Maven project</code>.
 
 5.	Next go to <code>File -> Project Structure... -> Modules</code>. In the Source tab, make
-	sure that the resources folder in <i>src\main\java</i> are set to a resource folder.
+	sure that the <i>resources</i> folder in <i>src\main\java</i> is set as a resource module.
 	
 6.	Finally within <code>Project Structure... -> SDKs</code> ensure that <i>jdk1.8.VERSION</i> is selected.
 
