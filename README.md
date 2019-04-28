@@ -4,7 +4,7 @@ Software Engineering Project 3
 MCINO Code Smeller
 
 ----------------------------
-| HOW TO RUN THE JAR FILE: |
+HOW TO RUN THE JAR FILE:
 ----------------------------
 
 1.	Make sure you have Java 8 installed to run the jar file.
@@ -19,7 +19,7 @@ MCINO Code Smeller
 	MCINO.jar should now run.
 	
 --------------------------------------
-| jarfix.exe finds diiferent JDK/JRE |
+jarfix.exe finds diiferent JDK/JRE
 --------------------------------------
 1.	Create a jarfix.ini file and include the following:
 		"[jarfix]
